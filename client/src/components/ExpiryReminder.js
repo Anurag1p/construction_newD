@@ -3,25 +3,21 @@ import React, { useState, useEffect } from 'react';
 
 function ExpiryReminder(props) {
 
-
-
-
-
-
   const { data } = props;
 
+// console.log("heelodate", data)
 
   const breakdate =  data?.split("-")
-  const day = breakdate[0]
+  console.log("breakdate", breakdate)
+  
+  const day = breakdate[2]
   const month = breakdate[1]
-  const year = breakdate[2]
+  const year = breakdate[0]
+  console.log("day", day)
+  console.log("month", month)
+  console.log("year", year)
 
   const expiryDate = `${year}-${month}-${day}`
-
-  
-
-  
-
   
   const [daysRemaining, setDaysRemaining] = useState(null);
 

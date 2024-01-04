@@ -8,8 +8,8 @@ import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
 import { ToastContainer, toast } from "react-toastify";
 import Dropzone from "react-dropzone"
 import "react-toastify/dist/ReactToastify.css";
-// import SimpleBackdrop from "../components/Backdrop";
-import moment from "moment-timezone";
+import SimpleBackdrop from "../components/Backdrop";
+
 const style = {
     position: "absolute",
     top: "50%",
@@ -26,27 +26,20 @@ const DocumentCreate = ({ COMPANY_ID, COMPANY_PARENT_USERNAME, COMPANY_USERNAME,
     const [open, setOpen] = useState(false);
     const [file, setFile] = useState([])
     const [backdrop, setBackdrop] = useState(false);
-    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // console.log(COMPANY_USERNAME, "COMPANY_USERNAME")
+    console.log(COMPANY_USERNAME, "COMPANY_USERNAME")
 
     const [formData, setFormData] = useState({
         selectedFile: null,
         DOCUMENT_EXPIRY_DATE: "",
         DOCUMENT_TYPE: "",
     });
-console.log(formData, "this is form data in doc create")
-
-
-
 
     console.log(formData.DOCUMENT_EXPIRY_DATE, "formattedMyDateCurrent")
 
-
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleOpen = () => setOpen(true);
-
-    // functon for formSubmisson-----------------------------
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -65,8 +58,7 @@ console.log(formData, "this is form data in doc create")
             return;
         }
 
-
-        // for expiry error 
+        // Check if the expiry date is greater than the current date
         const currentDate = new Date();
         const selectedDate = new Date(formData.DOCUMENT_EXPIRY_DATE);
 
@@ -78,10 +70,8 @@ console.log(formData, "this is form data in doc create")
             });
             return;
         }
-        // --------------end
 
         const data = new FormData();
-        // console.log(data, "data")
         data.append("file", file);
         data.append("DOCUMENT_REF_ID", COMPANY_ID);
         data.append("DOCUMENT_ADMIN_USERNAME", COMPANY_PARENT_USERNAME);
@@ -95,7 +85,6 @@ console.log(formData, "this is form data in doc create")
                 data,
             );
             if (response.data.operation === "successfull") {
-                // console.log("response", response)
                 setOpen(false);
                 update();
                 toast.success('Document uploaded successfully!', {
@@ -103,19 +92,22 @@ console.log(formData, "this is form data in doc create")
                     autoClose: 1000,
                 });
                 setFile(file ? file.name : "");
-                setFormData("")
+                setFormData({
+                    selectedFile: null,
+                    DOCUMENT_EXPIRY_DATE: "",
+                    DOCUMENT_TYPE: "",
+                });
             } else {
                 toast.error("Failed to upload document.");
             }
         } catch (error) {
-            console.error(error); // Log the error for debugging
+            console.error(error);
             toast.error("An error occurred while uploading the document.");
         } finally {
             setIsSubmitting(false);
-            setBackdrop(false); //recently added
+            setBackdrop(false);
         }
     };
-
     // function for close modal on button click --------------------
 
     const handleClose = () => {
@@ -127,54 +119,16 @@ console.log(formData, "this is form data in doc create")
         });
     };
 
-
-    // function for Expiry status -----------------------------------
-
-    // const handleExpiryDateChange = (e) => {
-    //     setFormData({
-    //         ...formData,
-    //         DOCUMENT_EXPIRY_DATE: e.target.value,
-    //     });
-    // };
-
-
-
-    const handleExpiryDateChange = (e) => {
-        const selectedDate = e.target.value;
-
-
-        // Use moment to adjust the date to the user's time zone
-        const userTimeZoneDate = moment(selectedDate)
-            .tz(moment.tz.guess())
-            .format("YYYY-MM-DD");
-
-
-        setFormData({
-            ...formData,
-            DOCUMENT_EXPIRY_DATE: userTimeZoneDate,
-        });
-    };
-
-
-    const handleAdditionalFieldChange = (e) => {
-        setFormData({
-            ...formData,
-            DOCUMENT_TYPE: e.target.value,
-
-        });
-        console.log(setFormData.DOCUMENT_EXPIRY_DATE, "setting")
-    };
-
-
     // onChnage method added for both field 
 
-    // const handleInputChange = (e) => {
-    //     const { name, value } = e.target;
-    //     setFormData({
-    //         ...formData,
-    //         [name]: value,
-    //     });
-    // };
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+
+        setFormData({
+            ...formData,
+            [name]: value,
+        });
+    };
 
     return (
         <>
@@ -208,7 +162,7 @@ console.log(formData, "this is form data in doc create")
                                 <Dropzone onDrop={acceptedFiles => setFile(...acceptedFiles)}>
                                     {({ getRootProps, getInputProps }) => (
                                         <section className="p-4 rounded-2" style={{ background: "#f2f2f2", border: "2px dashed gray" }} {...getRootProps()}>
-                                            <div >
+                                            <div>
                                                 <input {...getInputProps()} />
                                                 <p>Drag 'n' drop some files here, or click to select files</p>
                                             </div>
@@ -226,8 +180,8 @@ console.log(formData, "this is form data in doc create")
                                             type="date"
                                             className="form-control mb-2 pb-2 pt-2 form-control-2 rounded-0"
                                             id="DOCUMENT_EXPIRY_DATE"
-                                            name=" DOCUMENT_EXPIRY_DATE"
-                                            onChange={handleExpiryDateChange}
+                                            name="DOCUMENT_EXPIRY_DATE"
+                                            onChange={handleInputChange}
                                             value={formData.DOCUMENT_EXPIRY_DATE}
                                             required
                                         />
@@ -237,20 +191,22 @@ console.log(formData, "this is form data in doc create")
                                 <div className="row mb-2">
                                     <div className="form-group col-xl-12">
                                         <label className="pb-2 fs-6 rounded p-2">
-                                            Documet Type
+                                            Document Type
                                         </label>
                                         <input
                                             type="text"
                                             className="form-control mb-2 pb-2 pt-2 form-control-2 rounded-0"
                                             id="DOCUMENT_TYPE"
                                             name="DOCUMENT_TYPE"
-                                            onChange={handleAdditionalFieldChange}
+                                            onChange={handleInputChange}
                                             value={formData.DOCUMENT_TYPE}
-                                            placeholder="Additional Field"
+                                            placeholder="Document Type"
                                             required
                                         />
                                     </div>
                                 </div>
+
+                                {/* ... (other input fields) */}
 
                                 <div className="row">
                                     <div className="form-group col-8">
@@ -274,10 +230,14 @@ console.log(formData, "this is form data in doc create")
                                 </div>
                             </form>
                         </div>
+
                     </Box>
                     <ToastContainer position="top-center" autoClose={1000} />
-                </Container >
-            </Modal >
+                </Container>
+
+
+
+            </Modal>
         </>
     );
 };

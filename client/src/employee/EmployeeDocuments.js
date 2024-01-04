@@ -13,6 +13,7 @@ import EmployeeDocCreate from './EmployeeDocCreate';
 import { Button } from '@mui/material';
 import SimpleBackdrop from "../components/Backdrop";
 import { RotatingLines } from 'react-loader-spinner';
+import moment from 'moment';
 
 const EmployeeDocuments = ({ COMPANY_USERNAME, EMPLOYEE_ID, update, EMPLOYEE_USERNAME }) => {
   const [deleteItem, setDeleteItem] = useState('');
@@ -159,21 +160,15 @@ const EmployeeDocuments = ({ COMPANY_USERNAME, EMPLOYEE_ID, update, EMPLOYEE_USE
   // function to fomate Date ----
 
   const formatDate = (dateString, withTimezone = false) => {
-    const options = {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      timeZoneName: 'short',
-    };
+    const userTimeZone = moment.tz.guess();
+    const date = moment(dateString).tz(userTimeZone);
 
-    const date = new Date(dateString);
-    const formattedDate = new Intl.DateTimeFormat('en-US', options).format(date);
+    const formattedDate = withTimezone
+        ? date.format("YYYY-MM-DD HH:mm:ss z") // Include time and timezone
+        : date.format("YYYY-MM-DD"); // Date only
 
-    return withTimezone ? formattedDate : formattedDate.split(', ')[0];
-  };
+    return formattedDate;
+};
 
 
   // function for add icons in document cell ----
@@ -232,9 +227,9 @@ const EmployeeDocuments = ({ COMPANY_USERNAME, EMPLOYEE_ID, update, EMPLOYEE_USE
       editable: false,
     },
     {
-      field: 'ExpiryDate',
+      field: 'ExpiryDateStatus',
       headerName: 'Expiry Status',
-      description: 'Document Expiry',
+      description: 'Document Expiry status',
       sortable: false,
       width: 140,
       editable: false,
@@ -297,8 +292,8 @@ const EmployeeDocuments = ({ COMPANY_USERNAME, EMPLOYEE_ID, update, EMPLOYEE_USE
         documentSize: formatSize(item.DOCUMENT_FILEDATA?.size) || '',
         uploadDate: formatDate(item.createdAt),
         documentType: item.DOCUMENT_FILEDATA?.mimetype || '',
-        ExpiryDate: formatDate(item.DOCUMENT_EXPIRY_DATE, true) || '',
-        documentExpDate: formatDate(item.DOCUMENT_EXPIRY_DATE),
+        ExpiryDateStatus: formatDate(item.DOCUMENT_EXPIRY_DATE) || '',
+        documentExpDate: formatDate(item.DOCUMENT_EXPIRY_DATE) || '',
         documentIdType: item.DOCUMENT_TYPE || '',
       })) || []
     );

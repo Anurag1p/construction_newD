@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import { Button ,Skeleton} from "@mui/material";
-
+import { Button, Skeleton } from "@mui/material";
+import moment from "moment-timezone";
 import SimpleBackdrop from "../components/Backdrop";
-import "../assests/css/document.css"; // Import the CSS filefileN
+// import "../assests/css/document.css"; // Import the CSS filefileN
+import "../assests/css/document.css";
 import { DataGrid } from '@mui/x-data-grid';
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -27,6 +28,7 @@ import InsertChartIcon from '@mui/icons-material/InsertChart';
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import { RotatingLines } from "react-loader-spinner";
+import CreateDoc from "../components/documentdynamic/DocCreate";
 
 export default function Document(props) {
 
@@ -39,10 +41,13 @@ export default function Document(props) {
     const [resStatus, setResStatus] = useState(false); //adding newline
     const [isLoading, setIsLoading] = useState(true);
 
+    // const [display, setDisplay] = useState("unarchive")
+
     // console.log("COMPANYPARENT :", COMPANY_PARENT_USERNAME);
 
     const [open, setOpen] = React.useState(false);
 
+    // let {endpoint} = props
     useEffect(() => {
         // console.log("heelo i am runnig useEffect")
         getalldocument();
@@ -58,7 +63,7 @@ export default function Document(props) {
         document.body.removeChild(link);
     };
 
-
+    const apiEndpoint = "/api/create_document";
     // Function to upload  the documents 
 
     const MyScreen = styled(Paper)((props) => ({
@@ -99,14 +104,12 @@ export default function Document(props) {
             setIsLoading(false);
             setTotalDocuments(data.result?.length || 0);
 
-            // console.log("data", data.result);
+            console.log("data documents", data.result);
         } catch (error) {
             setIsLoading(false);
             console.log("Error Fetching Data :", error);
         }
     };
-
-
 
     // Function to download the uploaded documents 
     const handleDownload = async (documentId, fileName) => {
@@ -265,7 +268,7 @@ export default function Document(props) {
         },
 
         {
-            field: 'ExpiryDate',
+            field: 'ExpiryDateStatus',
             headerName: 'Expiry Status',
             description: 'Document Expiry',
             sortable: false,
@@ -320,30 +323,20 @@ export default function Document(props) {
                 );
             },
         },
-
     ];
 
 
-
-    // function for global time according to timezone 
+    // this is a new function using moment for date conversion 
     const formatDate = (dateString, withTimezone = false) => {
-        const options = {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            timeZoneName: 'short',
-        };
+        const userTimeZone = moment.tz.guess();
+        const date = moment(dateString).tz(userTimeZone);
 
-        const date = new Date(dateString);
-        const formattedDate = new Intl.DateTimeFormat('en-US', options).format(date);
+        const formattedDate = withTimezone
+            ? date.format("YYYY-MM-DD HH:mm:ss z") // Include time and timezone
+            : date.format("YYYY-MM-DD"); // Date only
 
-        return withTimezone ? formattedDate : formattedDate.split(', ')[0]; // Extract date without timezone
+        return formattedDate;
     };
-
-
 
 
     // after new
@@ -357,28 +350,25 @@ export default function Document(props) {
         documentSize: formatSize(item.DOCUMENT_FILEDATA?.size) || '',
         uploadDate: formatDate(item.createdAt),
         documentType: item.DOCUMENT_FILEDATA?.mimetype || '',
-        ExpiryDate: formatDate(item.DOCUMENT_EXPIRY_DATE) || '',
+        ExpiryDateStatus: formatDate(item.DOCUMENT_EXPIRY_DATE) || '',
         documentExpDate: formatDate(item.DOCUMENT_EXPIRY_DATE) || '',
         documentIdType: item.DOCUMENT_TYPE || '',
     })) || [];
 
-
-
-    
-  const Animations = () => {
-    return (
-      <Box sx={{ width: "100%" }}>
-        <Skeleton animation="pulse" height={60} />
-        <Skeleton animation="pulse" height={50} />
-        <Skeleton animation="pulse" height={50} />
-        <Skeleton animation="pulse" height={50} />
-        <Skeleton animation="pulse" height={50} />
-        <Skeleton animation="pulse" height={50} />
-        <Skeleton animation="pulse" height={50} />
-        <Skeleton animation="pulse" height={50} />
-      </Box>
-    );
-  };
+    const Animations = () => {
+        return (
+            <Box sx={{ width: "100%" }}>
+                <Skeleton animation="pulse" height={60} />
+                <Skeleton animation="pulse" height={50} />
+                <Skeleton animation="pulse" height={50} />
+                <Skeleton animation="pulse" height={50} />
+                <Skeleton animation="pulse" height={50} />
+                <Skeleton animation="pulse" height={50} />
+                <Skeleton animation="pulse" height={50} />
+                <Skeleton animation="pulse" height={50} />
+            </Box>
+        );
+    };
     // console.log(rows, "myrows")
     return (
         <>
@@ -390,80 +380,91 @@ export default function Document(props) {
                 active={4}
                 toggle={openNav}
             />
-            ;
-
             <Box className="box" >
                 <Button
-                    sx={{ color: "#277099" }}
-                    className="btn"
-                >Company Documents</Button>
-
+                    size="small"
+                    variant={"outlined"}
+                    className="btn button  bg-white"
+                // className={display === "unarchive" ? "btn button  bg-white" : "btn btn-sm bg-button rounded-0 text-light"}
+                // onClick={() => setDisplay("unarchive")}
+                >
+                    Company Documents
+                </Button>
+                {/* <Button
+                    size="small"
+                    variant={"outlined"}
+                    className={display === "archive" ? "btn button  bg-white" : "btn btn-sm bg-button rounded-0 text-light"}
+                    onClick={() => setDisplay("archive")}
+                >
+                    Archive
+                </Button> */}
                 <Navbar toggle={() => setOpenNav((e) => !e)} />
-
-                <DocumentCreate
+                {/* <DocumentCreate
                     name={"Employee"}
                     COMPANY_ID={COMPANY_ID}
                     COMPANY_USERNAME={COMPANY_USERNAME}
                     COMPANY_PARENT_USERNAME={COMPANY_PARENT_USERNAME}
                     update={getalldocument}
 
-                />
+                /> */}
 
+                <CreateDoc
+                    COMPANY_ID={COMPANY_ID}
+                    COMPANY_PARENT_USERNAME={COMPANY_PARENT_USERNAME}
+                    COMPANY_USERNAME={COMPANY_USERNAME}
+                    update={getalldocument}
+                    apiEndpoint={apiEndpoint}
+                />
                 <MyScreen sx={{ display: "block", padding: 2 }}>
                     <Box style={{ height: "100%", padding: 0, paddingBottom: "0" }}>
-                    {isLoading === true ? 
-                       <Animations /> : isLoading === false ?
-           
-                            <DataGrid
-                                rows={rows}
-                                columns={columns}
-                                sx={{ border: "none", height: '80vh' }}
-                                initialState={{
-                                    pagination: {
-                                        paginationModel: {
-                                            pageSize: 20,
+                        {isLoading === true ?
+                            <Animations /> : isLoading === false ?
+                                <DataGrid
+                                    rows={rows}
+                                    columns={columns}
+                                    sx={{ border: "none", height: '80vh' }}
+                                    initialState={{
+                                        pagination: {
+                                            paginationModel: {
+                                                pageSize: 14,
+                                            },
                                         },
-                                    },
-                                }}
-                                pageSizeOptions={[10]}
-                                disableMultipleSelection
-                                density="compact"
+                                    }}
+                                    pageSizeOptions={[10]}
+                                    disableMultipleSelection
+                                    density="compact"
 
-                                getRowId={(row) => row.id}
-                            />
-                           
-                            : isLoading === "error" ? <div
-                                style={{
-                                    position: "absolute",
-                                    top: "50%",
-                                    left: "50%",
-                                    transform: "translate(-50%,-50%)",
-                                }}
-                            >
-                                <small className="text-dark"><p>Check your connection and try again. :(</p><center><button onClick={getalldocument} className="btn btn-sm btn-secondary">Retry</button></center></small>
-                            </div> : <div
-                                style={{
-                                    position: "absolute",
-                                    top: "50%",
-                                    left: "50%",
-                                    transform: "translate(-50%,-50%)",
-                                }}
-                            >
-                                <RotatingLines
-                                    strokeColor="#2D5169"
-                                    strokeWidth="5"
-                                    animationDuration="0.75"
-                                    width="50"
-                                    visible={true}
+                                    getRowId={(row) => row.id}
                                 />
-                            </div>  }
-                        
+                                : isLoading === "error" ? <div
+                                    style={{
+                                        position: "absolute",
+                                        top: "50%",
+                                        left: "50%",
+                                        transform: "translate(-50%,-50%)",
+                                    }}
+                                >
+                                    <small className="text-dark"><p>Check your connection and try again. :(</p><center><button onClick={getalldocument} className="btn btn-sm btn-secondary">Retry</button></center></small>
+                                </div> : <div
+                                    style={{
+                                        position: "absolute",
+                                        top: "50%",
+                                        left: "50%",
+                                        transform: "translate(-50%,-50%)",
+                                    }}
+                                >
+                                    <RotatingLines
+                                        strokeColor="#2D5169"
+                                        strokeWidth="5"
+                                        animationDuration="0.75"
+                                        width="50"
+                                        visible={true}
+                                    />
+                                </div>}
+
                     </Box>
                 </MyScreen>
             </Box>
-
-
-
             <SimpleBackdrop open={backdrop} />
 
         </>

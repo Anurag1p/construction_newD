@@ -18,6 +18,7 @@ import CreateProjectDoc from '../company/CreateProjectDoc';
 
 import CreateSubDoc from './CreateSubDoc';
 import { RotatingLines } from 'react-loader-spinner';
+import moment from 'moment';
 
 const SubcontractDoc = ({ SubcontractorData }) => {
 
@@ -159,20 +160,14 @@ const SubcontractDoc = ({ SubcontractorData }) => {
     };
 
     const formatDate = (dateString, withTimezone = false) => {
-        const options = {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            timeZoneName: 'short',
-        };
-
-        const date = new Date(dateString);
-        const formattedDate = new Intl.DateTimeFormat('en-US', options).format(date);
-
-        return withTimezone ? formattedDate : formattedDate.split(', ')[0];
+        const userTimeZone = moment.tz.guess();
+        const date = moment(dateString).tz(userTimeZone);
+    
+        const formattedDate = withTimezone
+            ? date.format("YYYY-MM-DD HH:mm:ss z") // Include time and timezone
+            : date.format("YYYY-MM-DD"); // Date only
+    
+        return formattedDate;
     };
 
 
@@ -217,17 +212,17 @@ const SubcontractDoc = ({ SubcontractorData }) => {
             editable: false,
         },
         {
-            field: 'ExpiryDate',
+            field: 'ExpiryDateStatus',
             headerName: 'Expiry Status',
-            description: 'Document Expiry',
+            description: 'Document Expiry status',
             sortable: false,
             width: 140,
             editable: false,
             renderCell: (cellValues) => {
-                return <ExpiryReminder data={cellValues?.value} />;
+              return <ExpiryReminder data={cellValues?.value} />;
             },
             size: 'small',
-        },
+          },
         {
             field: 'download',
             headerName: 'Download',
@@ -282,7 +277,7 @@ const SubcontractDoc = ({ SubcontractorData }) => {
                 documentSize: formatSize(item.DOCUMENT_FILEDATA?.size) || '',
                 uploadDate: formatDate(item.createdAt),
                 documentType: item.DOCUMENT_FILEDATA?.mimetype || '',
-                ExpiryDate: formatDate(item.DOCUMENT_EXPIRY_DATE, true) || '',
+                ExpiryDateStatus: formatDate(item.DOCUMENT_EXPIRY_DATE) || '',
                 documentExpDate: formatDate(item.DOCUMENT_EXPIRY_DATE),
                 documentIdType: item.DOCUMENT_TYPE || '',
 

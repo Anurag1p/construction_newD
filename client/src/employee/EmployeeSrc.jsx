@@ -31,7 +31,7 @@ import EmployeeDocuments from "./EmployeeDocuments";
 const EmployeeSrc = () => {
   const { COMPANY_ID, COMPANY_USERNAME, COMPANY_PARENT_ID, COMPANY_PARENT_USERNAME } = useParams();
   const [archived, setArchived] = useState([{}]);
-  const [getarchived, setGetrchived] = useState([{}]);
+  // const [getarchived, setGetrchived] = useState([{}]);
   //isLoading this is for the Skeleton
   const [isLoading, setIsLoading] = useState(true);
 
@@ -178,6 +178,7 @@ const EmployeeSrc = () => {
   // const filterRow = allempData?.filter(obj => obj?.ARCHIVED === false);
 
   console.log(allempData, "myRows")
+  
   const FilterArchive = allempData?.filter(newData => newData?.ARCHIVED === false);
   const rows = FilterArchive;
 
