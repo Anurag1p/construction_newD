@@ -46,11 +46,14 @@ import Documents from "./company/document/Documents";
 import Contractor from "./company/mycontractor/Contractor";
 import ContractorDetail from "./company/mycontractor/ContractorDetail";
 import Dashboard from "./contractors/dashboard/Dashboard";
+import { UseSelector, useDispatch, useSelector } from "react-redux";
+import {setCompanyuser} from "./redux/slices/CompanyLoginSlice"
 
 function App() {
   const [userName, setUserName] = useState("");
-
-  const [openNav, setOpenNav] = useState(false);
+  const Dispatch = useDispatch()
+  const companyData  = useSelector(prev => prev.companyLogin)
+  console.log(companyData, "companyLoginData")
 
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
@@ -59,6 +62,7 @@ function App() {
         const splitedData = data?.split("&&");
         console.log(user, "user");
         setUserName(splitedData);
+        Dispatch(setCompanyuser(splitedData))
         console.log(splitedData, "splitedData");
       } else setUserName("");
     });

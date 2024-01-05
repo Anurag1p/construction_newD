@@ -10,7 +10,7 @@ import {setCompanyuser} from "../redux/slices/CompanyLoginSlice"
 
 function Logincomp({ message }) {
   //redux 
-  const Dispatch = useDispatch()
+  // const Dispatch = useDispatch()
 
 
   const navigate = useNavigate();
@@ -47,9 +47,9 @@ function Logincomp({ message }) {
         setLoading(false);
         const data = res.user.displayName;
         const param = data.split("&&");
-        console.log(param[4]);
+        // console.log(param[4]);
         if (param[4] === "company") {
-          Dispatch(setCompanyuser(param))
+          // Dispatch(setCompanyuser(param))
           navigate(`/company/dashboard`);
         } else {
           navigate("/");
