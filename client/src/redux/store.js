@@ -33,6 +33,7 @@ const persistedAdminReducer = persistReducer(persistConfig,AdminSlice)
 const persistedEmployeeReducer = persistReducer(persistConfig,EmployeeLogin)
 const persistedCompanyReducer = persistReducer(persistConfig,setOneCompany)
 const persistedAllCompanyReducer = persistReducer(persistConfig,AllCompanyDetail)
+const persistedAllProjectDetail = persistReducer(persistConfig,AllProjectDetail)
 
 
 
@@ -40,7 +41,7 @@ const rootReducer = combineReducers({
   companyLogin: persistedLoginReducer,
   adminLogin :persistedAdminReducer,
   employeeLogin:persistedEmployeeReducer,
-  allCompany:persistedAllCompanyReducer,
+  allCompany:AllCompanyDetail,
   allProject:AllProjectDetail,
   allEmployee:AllEmployeeDetail,
   allContractor:AllContractorDetail,

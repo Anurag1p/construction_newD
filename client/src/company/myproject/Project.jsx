@@ -8,6 +8,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
 import { RotatingLines } from "react-loader-spinner";
+import { useSelector } from "react-redux";
 
 const Project = ({
   COMPANY_ID,
@@ -15,6 +16,7 @@ const Project = ({
   COMPANY_PARENT_ID,
   COMPANY_PARENT_USERNAME,
 }) => {
+  const projectAllData = useSelector(prev => prev.allProject.user)
   console.log(COMPANY_ID, "COMPANY_ID");
 
   const [open, setOpen] = useState(false);
@@ -24,26 +26,26 @@ const Project = ({
   const navigate = useNavigate();
 
   //fatch Projects
-  const fetchProjects = async (e) => {
-    try {
-      const response = await axios.put("/api/get_projects", {
-        PROJECT_PARENT_ID: COMPANY_ID,
-        PROJECT_PARENT_USERNAME: COMPANY_USERNAME,
-        PROJECT_MEMBER_PARENT_ID: COMPANY_PARENT_ID,
-        PROJECT_MEMBER_PARENT_USERNAME: COMPANY_PARENT_USERNAME,
-      });
-      const data = response.data;
-      setResStatus(true);
-      setProjectData(data?.result);
-    } catch (err) {
-      console.log("Something Went Wrong: =>", err);
-      setResStatus("error");
-    }
-  };
+  // const fetchProjects = async (e) => {
+  //   try {
+  //     const response = await axios.put("/api/get_projects", {
+  //       PROJECT_PARENT_ID: COMPANY_ID,
+  //       PROJECT_PARENT_USERNAME: COMPANY_USERNAME,
+  //       PROJECT_MEMBER_PARENT_ID: COMPANY_PARENT_ID,
+  //       PROJECT_MEMBER_PARENT_USERNAME: COMPANY_PARENT_USERNAME,
+  //     });
+  //     const data = response.data;
+  //     setResStatus(true);
+  //     setProjectData(data?.result);
+  //   } catch (err) {
+  //     console.log("Something Went Wrong: =>", err);
+  //     setResStatus("error");
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchProjects();
-  }, [COMPANY_ID]);
+  // useEffect(() => {
+  //   fetchProjects();
+  // }, [COMPANY_ID]);
 
   const MyScreen = styled(Paper)((props) => ({
     height: "calc(100vh - 29px)",
@@ -149,14 +151,14 @@ const Project = ({
       renderCell: (cellValues) => {
         return (
           <Button>
-            <ProjectEdit edit={cellValues} Update={fetchProjects} />
+            <ProjectEdit edit={cellValues} />
           </Button>
         );
       },
     },
   ];
 
-  const rows = ProjectData;
+  const rows = projectAllData;
   const filterData = data?.row;
 
   return (
@@ -171,36 +173,12 @@ const Project = ({
 
       <Box className="box" style={{ background: "#277099" }}>
         {/* <Navbar toggle={() => setOpenNav((e) => !e)} name={COMPANY_USERNAME} /> */}
-        {resStatus == true ? (<ProjectCreate
-          COMPANY_ID={COMPANY_ID}
-          COMPANY_USERNAME={COMPANY_USERNAME}
-          COMPANY_PARENT_ID={COMPANY_PARENT_ID}
-          COMPANY_PARENT_USERNAME={COMPANY_PARENT_USERNAME}
-          name={"Project"}
-          Update={fetchProjects}
-        />) : <>
-          <button
-            size="small"
-            disabled
-            className={"btn button border-bottom-0 bg-white btn-sm"}
-          >
-            My Projects
-          </button>
-          <button
-
-            style={{ color: "#277099" }}
-            className="btn rounded-0 border-0  rounded-0 text-light btn-primary btn-sm"
-            size="small"
-            disabled
-          >
-            + Add New Project
-          </button>
-        </>}
+        {projectAllData && (<ProjectCreate />) }
 
         <div className="myscreen p-3">
           <Box style={{ height: "100%", padding: 0, paddingBottom: "0" }}>
             <>
-              {resStatus == true ? (<DataGrid
+              {projectAllData ? (<DataGrid
                 sx={{ border: "none" }}
                 rows={rows}
                 columns={columns}
@@ -231,7 +209,7 @@ const Project = ({
                       <p>Check your connection and try again. :(</p>
                       <center>
                         <button
-                          onClick={fetchProjects}
+                          // onClick={fetchProjects}
                           className="btn btn-sm btn-secondary"
                         >
                           Retry

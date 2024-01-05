@@ -7,17 +7,19 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import projectList from "../../jsonlist/typeOfProject.json";
 import { Button } from "@mui/material";
+import { useSelector } from "react-redux";
 
 
 
 
-export default function ProjectCreate({
-  COMPANY_ID,
-  COMPANY_USERNAME,
-  COMPANY_PARENT_ID,
-  COMPANY_PARENT_USERNAME,
-  Update,
-}) {
+export default function ProjectCreate() {
+  const companyData = useSelector(prev => prev.companyLogin.user)
+  // extract company
+  const COMPANY_ID = companyData[0];
+  const COMPANY_USERNAME = companyData[1];
+  const COMPANY_PARENT_ID = companyData[2];
+  const COMPANY_PARENT_USERNAME = companyData[3];
+
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -98,7 +100,7 @@ export default function ProjectCreate({
     const isValidName = createProject.PROJECT_NAME !== "";
     const isValidUsername = createProject.PROJECT_USERNAME !== "";
     const isValidCompAccount = createProject.PROJECT_ACCOUNT !== "";
-    
+
     if (!isValidUsername) {
       setUsernameError("Username should not be empty");
       return;
@@ -129,7 +131,7 @@ export default function ProjectCreate({
             position: toast.POSITION.TOP_CENTER,
             autoClose: 1000,
           });
-          Update();
+          // Update();
           setOpen(false);
           setCreateProject({});
         }
@@ -169,11 +171,11 @@ export default function ProjectCreate({
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
-        style={{zIndex:9999999}}
+        style={{ zIndex: 9999999 }}
       >
         <Box className="modal-content">
           <form onSubmit={handleSubmit} className="overflow-auto">
-          <h5>Create project</h5>
+            <h5>Create project</h5>
             <div className="row py-2">
               <div className="form-group col-xl-4">
                 <label> Project Username</label>
@@ -201,7 +203,7 @@ export default function ProjectCreate({
                   value={createProject.PROJECT_NAME}
                   name="PROJECT_NAME"
                   onChange={handleCreate}
-     
+
                 />
                 {nameError && (
                   <div className="invalid-feedback">{nameError}</div>
@@ -218,7 +220,7 @@ export default function ProjectCreate({
                   name="PROJECT_ACCOUNT"
                   value={createProject.PROJECT_ACCOUNT}
                   onChange={handleCreate}
-       
+
                 />
                 {companyaccError && (
                   <div className="invalid-feedback">{companyaccError}</div>

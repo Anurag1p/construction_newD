@@ -47,12 +47,16 @@ import Contractor from "./company/mycontractor/Contractor";
 import ContractorDetail from "./company/mycontractor/ContractorDetail";
 import Dashboard from "./contractors/dashboard/Dashboard";
 import { UseSelector, useDispatch, useSelector } from "react-redux";
-import {setCompanyuser} from "./redux/slices/CompanyLoginSlice"
+import { setCompanyuser } from "./redux/slices/CompanyLoginSlice"
+import { setOneCompany } from "./redux/slices/getOneCompanySlice"
+import { setAllProject } from "./redux/slices/getallProjectSlice"
 
 function App() {
   const [userName, setUserName] = useState("");
   const Dispatch = useDispatch()
-  const companyData  = useSelector(prev => prev.companyLogin)
+  const companyData = useSelector(prev => prev.companyLogin.user)
+  const companyAllData = useSelector(prev => prev.setOneCompany.user)
+  const projectAllData = useSelector(prev => prev.allProject.user)
   console.log(companyData, "companyLoginData")
 
   useEffect(() => {
@@ -68,12 +72,74 @@ function App() {
     });
   }, []);
 
+
   // extract company
-  const COMPANY_ID = userName[0];
-  const COMPANY_USERNAME = userName[1];
-  const COMPANY_PARENT_ID = userName[2];
-  const COMPANY_PARENT_USERNAME = userName[3];
+  const COMPANY_ID = companyData[0];
+  const COMPANY_USERNAME = companyData[1];
+  const COMPANY_PARENT_ID = companyData[2];
+  const COMPANY_PARENT_USERNAME = companyData[3];
   console.log(COMPANY_ID, "uni");
+
+  const headers = {
+    "Content-Type": "application/json"
+  };
+
+  // get company
+  const getCompany = async () => {
+    try {
+      const response = await axios.put(
+        "/api/get_company",
+        {
+          COMPANY_PARENT_ID: COMPANY_PARENT_ID,
+          COMPANY_PARENT_USERNAME: COMPANY_PARENT_USERNAME,
+          COMPANY_ID : COMPANY_ID,
+          COMPANY_USERNAME : COMPANY_USERNAME
+        },
+        {
+          headers
+        }
+      );
+      // setTimeout(() => {
+      // console.log("response.data : ", response.data);
+      const data = response.data;
+      Dispatch(setOneCompany(data.result));
+
+      // }, 1000);
+    } catch (error) {
+      console.log("Error fetching data:", error);
+
+    }
+  };
+
+  const fetchProjects = async (e) => {
+    try {
+      const response = await axios.put("/api/get_projects", {
+        PROJECT_PARENT_ID: COMPANY_ID,
+        PROJECT_PARENT_USERNAME: COMPANY_USERNAME,
+        PROJECT_MEMBER_PARENT_ID: COMPANY_PARENT_ID,
+        PROJECT_MEMBER_PARENT_USERNAME: COMPANY_PARENT_USERNAME,
+      });
+      const data = response.data;
+      // setResStatus(true);
+      // setProjectData(data?.result);
+      // 
+      Dispatch(setAllProject(data?.result))
+    } catch (err) {
+      console.log("Something Went Wrong: =>", err);
+      // setResStatus("error");
+    }
+  };
+
+
+  useEffect(() => {
+    getCompany();
+  }, [companyData]);
+
+  useEffect(() => {
+    fetchProjects();
+  }, [companyAllData]);
+
+
 
   return (
     <div
@@ -116,12 +182,7 @@ function App() {
             <Route
               path="/company/dashboard/"
               element={
-                <Dashboard
-                  COMPANY_ID={COMPANY_ID}
-                  COMPANY_USERNAME={COMPANY_USERNAME}
-                  COMPANY_PARENT_ID={COMPANY_PARENT_ID}
-                  COMPANY_PARENT_USERNAME={COMPANY_PARENT_USERNAME}
-                />
+                <Dashboard/>
               }
             />
             {/* company dashboard */}
@@ -130,12 +191,7 @@ function App() {
             <Route
               path="/company/projects/"
               element={
-                <Project
-                  COMPANY_ID={COMPANY_ID}
-                  COMPANY_USERNAME={COMPANY_USERNAME}
-                  COMPANY_PARENT_ID={COMPANY_PARENT_ID}
-                  COMPANY_PARENT_USERNAME={COMPANY_PARENT_USERNAME}
-                />
+                <Project/>
               }
             />
             <Route

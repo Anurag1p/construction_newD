@@ -18,6 +18,7 @@ import Navbar from "./Navbar";
 import { auth } from "../firebase";
 import axios from "axios";
 import zIndex from "@mui/material/styles/zIndex";
+import { useSelector } from "react-redux";
 
 const Sidebar = ({
   COMPANY_ID,
@@ -27,6 +28,8 @@ const Sidebar = ({
   active,
   toggle,
 }) => {
+
+  const companyData = useSelector(state => state.setOneCompany.user)
   
   console.log(COMPANY_ID, "control");
   const navigate = useNavigate()
@@ -44,39 +47,10 @@ const Sidebar = ({
     }
   };
 
-  const headers = {
-    "Content-Type": "application/json"
-  };
 
 
-  // get company
-  const getCompany = async () => {
-    try {
-      const response = await axios.put(
-        "/api/get_all_company",
-        {
-          COMPANY_PARENT_ID: COMPANY_PARENT_ID,
-          COMPANY_PARENT_USERNAME: COMPANY_PARENT_USERNAME,
-        },
-        {
-          headers
-        }
-      );
-      // setTimeout(() => {
-      // console.log("response.data : ", response.data);
-      const data = response.data;
-      setData(data.result);
-      // }, 1000);
-    } catch (error) {
-      console.log("Error fetching data:", error);
 
-    }
-  };
-
-
-  useEffect(() => {
-    getCompany();
-  }, [COMPANY_ID]);
+ 
 
 
 
@@ -84,9 +58,9 @@ const Sidebar = ({
 
 
   const drawerWidth = 0;
-  const filterData = data?.filter(prev => prev.COMPANY_ID == COMPANY_ID)[0]
+  const filterData = companyData?.[0]
 
-  console.log(filterData, "wh")
+  // console.log(filterData, "wh")
 
 
 
