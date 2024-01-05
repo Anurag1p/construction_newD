@@ -74,10 +74,10 @@ function App() {
 
 
   // extract company
-  const COMPANY_ID = companyData[0];
-  const COMPANY_USERNAME = companyData[1];
-  const COMPANY_PARENT_ID = companyData[2];
-  const COMPANY_PARENT_USERNAME = companyData[3];
+  const COMPANY_ID = companyData?.[0];
+  const COMPANY_USERNAME = companyData?.[1];
+  const COMPANY_PARENT_ID = companyData?.[2];
+  const COMPANY_PARENT_USERNAME = companyData?.[3];
   console.log(COMPANY_ID, "uni");
 
   const headers = {
@@ -99,8 +99,7 @@ function App() {
           headers
         }
       );
-      // setTimeout(() => {
-      // console.log("response.data : ", response.data);
+     //remove
       const data = response.data;
       Dispatch(setOneCompany(data.result));
 
@@ -286,11 +285,6 @@ function App() {
               element={<ContractorDetail />}
             />
             {/* My contractos */}
-
-
-
-
-
 
 
             <Route
