@@ -165,7 +165,7 @@ export default function CreateContractor(props) {
           <form onSubmit={handleSubmit}>
             <div className="row py-2">
               <div className="form-group col-xl-4">
-                <label>Contractor Email</label>
+                <label>Sub contractor Email</label>
                 <input
                   type="text"
                   className="form-control form-control-2 rounded-0"
@@ -176,7 +176,7 @@ export default function CreateContractor(props) {
                 />
               </div>
               <div className="form-group col-xl-4">
-                <label>Contractor Name</label>
+                <label>Sub contractor Name</label>
                 <input
                   type="text"
                   className="form-control form-control-2 rounded-0"

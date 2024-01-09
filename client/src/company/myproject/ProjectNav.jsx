@@ -35,6 +35,7 @@ const ProjectNav = ({
           <ArrowBackIcon style={{ fontSize: "20px" }} />
         </Button>
 
+
         <Button
           onClick={(e) =>
             navigate("/company/projects/detail", {

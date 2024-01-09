@@ -48,15 +48,6 @@ const Sidebar = ({
   };
 
 
-
-
- 
-
-
-
-
-
-
   const drawerWidth = 0;
   const filterData = companyData?.[0]
 
@@ -154,13 +145,13 @@ const Sidebar = ({
               </ListItem>
             </Link>
             <Link
-              to={`/company/contractors`}
+              to={`/company/subcontractors`}
               className="nav-link"
               style={{ background: active == 5 ? "#f3f3f3" : "" }}
             >
               <ListItem disablePadding>
                 <ListItemButton sx={{ fontSize: "16px" }}>
-                  My contractors
+                  My subcontractors
                 </ListItemButton>
               </ListItem>
             </Link>
@@ -269,13 +260,13 @@ const Sidebar = ({
               </ListItem>
             </Link>
             <Link
-              to={`/company/contractor`}
+              to={`/company/subcontractors`}
               className="nav-link"
               style={{ background: active === 6 ? "#f3f3f3" : "" }}
             >
               <ListItem disablePadding>
                 <ListItemButton sx={{ fontSize: "16px" }}>
-                  My contractors
+                My Subcontractors
                 </ListItemButton>
               </ListItem>
             </Link>

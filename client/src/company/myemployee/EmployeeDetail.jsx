@@ -194,8 +194,6 @@ const EmployeeDetail = () => {
         }}
         className="box position-absolute"
       >
-        {/* <Navbar toggle={() => setOpenNav((e) => !e)} name={COMPANY_USERNAME} /> */}
-
         <EmployeeNav
           filterData={filterData}
           active={1}

@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
+
 import {
   AppBar,
   Avatar,
@@ -48,6 +49,7 @@ const CompanyNavbar = (props) => {
       } else setUserName("");
     });
   }, []);
+
 
   const urls = [
     {

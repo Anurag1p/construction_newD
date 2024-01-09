@@ -50,6 +50,7 @@ import { UseSelector, useDispatch, useSelector } from "react-redux";
 import { setCompanyuser } from "./redux/slices/CompanyLoginSlice"
 import { setOneCompany } from "./redux/slices/getOneCompanySlice"
 import { setAllProject } from "./redux/slices/getallProjectSlice"
+import SubContractorDoc from "./company/mycontractor/SubContractorDoc";
 
 function App() {
   const [userName, setUserName] = useState("");
@@ -92,14 +93,14 @@ function App() {
         {
           COMPANY_PARENT_ID: COMPANY_PARENT_ID,
           COMPANY_PARENT_USERNAME: COMPANY_PARENT_USERNAME,
-          COMPANY_ID : COMPANY_ID,
-          COMPANY_USERNAME : COMPANY_USERNAME
+          COMPANY_ID: COMPANY_ID,
+          COMPANY_USERNAME: COMPANY_USERNAME
         },
         {
           headers
         }
       );
-     //remove
+      //remove
       const data = response.data;
       Dispatch(setOneCompany(data.result));
 
@@ -181,7 +182,7 @@ function App() {
             <Route
               path="/company/dashboard/"
               element={
-                <Dashboard/>
+                <Dashboard />
               }
             />
             {/* company dashboard */}
@@ -190,7 +191,7 @@ function App() {
             <Route
               path="/company/projects/"
               element={
-                <Project/>
+                <Project />
               }
             />
             <Route
@@ -270,7 +271,7 @@ function App() {
 
             {/* My contractors */}
             <Route
-              path="/company/contractors"
+              path="/company/subcontractors"
               element={
                 <Contractor
                   COMPANY_ID={COMPANY_ID}
@@ -281,13 +282,18 @@ function App() {
               }
             />
             <Route
-              path="/company/contractors/detail"
+              path="/company/subcontractors/detail"
               element={<ContractorDetail />}
             />
+            <Route
+              path="/company/subcontractors/documents"
+              element={<SubContractorDoc />}
+            />
+
             {/* My contractos */}
 
 
-            <Route
+            {/* <Route
               path="/company/employees/:COMPANY_ID/:COMPANY_USERNAME/:COMPANY_PARENT_ID/:COMPANY_PARENT_USERNAME"
               element={<EmployeeSrc />}
             />
@@ -298,11 +304,11 @@ function App() {
             <Route
               path="/company/documents/:COMPANY_ID/:COMPANY_USERNAME/:COMPANY_PARENT_ID/:COMPANY_PARENT_USERNAME"
               element={<Document />}
-            />
-            <Route
+            /> */}
+            {/* <Route
               path="/company/contractor/:COMPANY_ID/:COMPANY_USERNAME/:COMPANY_PARENT_ID/:COMPANY_PARENT_USERNAME"
               element={<SubContract />}
-            />
+            /> */}
             <Route path="/temp/" element={<Firecreate />} />
           </>
         </Routes>

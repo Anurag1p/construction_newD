@@ -169,24 +169,6 @@ const ContractorDetail = () => {
 
 
 
-
-  // useEffect(() => {
-  //   gettimesheet();
-  // }, [filterData]);
-
-
-  // const Manual = workvalue?.filter(
-  //   (prev) =>
-  //     prev.ATTENDANCE_TYPE_OUT === "manual" ||
-  //     prev.ATTENDANCE_TYPE_IN === "manual"
-  // );
-
-
-  // console.log(Manual.length, "total")
-
-
-
-
   return (
     <>
       <Box
@@ -196,8 +178,7 @@ const ContractorDetail = () => {
         }}
         className="box position-absolute"
       >
-        {/* <Navbar toggle={() => setOpenNav((e) => !e)} name={COMPANY_USERNAME} /> */}
-
+        
         <ContractorNav
           filterData={filterData}
           active={1}
@@ -215,7 +196,7 @@ const ContractorDetail = () => {
                   <div className="col-12">
                     <div className="card">
                       <div className="card-body">
-                        <h5 className="card-title">Contractor Details</h5>
+                        <h5 className="card-title">Subcontractor Details</h5>
                         <table className="table" style={{ tableLayout: "" }}>
                           <tbody>
                             <ContractorGenPassword
@@ -335,7 +316,7 @@ const ContractorDetail = () => {
                   <div className="col-12 mt-2">
                     <div className="card">
                       <div className="card-body">
-                        <h5>List of Projects Assigned to Contractor:</h5>
+                        <h5>List of Projects Assigned to Subcontractor:</h5>
                         <DataGrid
                           sx={{ border: "none", height:"60vh" }}
                           rows={project}

@@ -10,6 +10,7 @@ import Sidebar from "../../components/Sidebar";
 import moment from "moment";
 import { RotatingLines } from "react-loader-spinner";
 import CreateContractor from "./CreateContractor";
+import EditSubcontract from "./EditSubContract";
 
 const Contractor = ({
   COMPANY_ID,
@@ -127,7 +128,7 @@ const Contractor = ({
   console.log(data, "data");
 
   const handleClick = (event) => {
-    navigate("/company/contractors/detail", {
+    navigate("/company/subcontractors/detail", {
       state: [
         event.row,
         COMPANY_ID,
@@ -139,15 +140,13 @@ const Contractor = ({
   };
 
 
-
-
 // attendance status
 
 const columns = [
   { field: "SUBCONTRACTOR_ID", headerName: "ID", width: 90 },
   {
     field: "SUBCONTRACTOR_USERNAME",
-    headerName: "Contractor Email",
+    headerName: "Subcontractor Email",
     width: 150,
   },
   {
@@ -201,8 +200,18 @@ const columns = [
     headerName: "Edit",
     width: 80,
     renderCell: (cellValues) => {
-      return <EmployeeEdit edit={cellValues} refetch={fetchData} />;
+      // return <EditSubcontract edit={cellValues} refetch={fetchData} />;
+      return(
+        <Button
+        // onClick={(event) => {
+        //   handleEdit(cellValues);
+        // }}
+        >
+          <EditSubcontract editsubcontract={cellValues} refetch={fetchData} />
+        </Button>
+      )
     },
+  
   },
   {
     field: "archive",
@@ -259,7 +268,7 @@ const columns = [
       />
       <Box className="box" style={{ background: "#277099" }}>
         {/* <Navbar toggle={() => setOpenNav((e) => !e)} name={COMPANY_USERNAME} /> */}
-        {resStatus == true ? (<><button
+        {resStatus === true ? (<><button
           variant={"outlined"}
           className={
             display === "unarchive"
@@ -268,7 +277,7 @@ const columns = [
           }
           onClick={() => setDisplay("unarchive")}
         >
-          My Contractors
+          My Subcontractors
         </button>
 
         <button
@@ -312,14 +321,14 @@ const columns = [
           size="small"
           disabled
         >
-            + Add Contractor
+            + Add Subcontractor
         </button>
       </>} 
 
         <div className="myscreen p-3">
           <Box style={{ height: "100%", padding: 0, paddingBottom: "0" }}>
             <>
-            {resStatus == true ? ( <DataGrid
+            {resStatus === true ? ( <DataGrid
                 className="display"
                 sx={{ border: "none" }}
                 // rows={display === "archive" ? rows2 : rows}

@@ -6,6 +6,7 @@ import Sidebar from "../../components/Sidebar";
 
 const EmployeeNav = ({ filterData, active, COMPANY_ID, COMPANY_USERNAME, COMPANY_PARENT_ID, COMPANY_PARENT_USERNAME }) => {
   const navigate = useNavigate();
+  console.log("filterData1", filterData, COMPANY_ID, COMPANY_USERNAME,COMPANY_PARENT_ID )
   return (
     <>
       <Sidebar

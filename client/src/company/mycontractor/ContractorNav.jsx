@@ -17,7 +17,7 @@ const ContractorNav = ({ filterData, active, COMPANY_ID, COMPANY_USERNAME, COMPA
       />
       <div className="container-fluid pb-0 g-0" style={{ background: "#277099" }}>
         <Button
-          onClick={() => navigate("/company/employees", { state: filterData })}
+          onClick={() => navigate("/company/subcontractors", { state: filterData })}
           variant="contained"
           className="btn rounded-0"
           size="small"
@@ -27,7 +27,7 @@ const ContractorNav = ({ filterData, active, COMPANY_ID, COMPANY_USERNAME, COMPA
 
         <Button
           onClick={(e) =>
-            navigate("/company/employees/detail", {
+            navigate("/company/subcontractors/detail", {
               state: [filterData, COMPANY_ID,
                 COMPANY_USERNAME,
                 COMPANY_PARENT_ID,
@@ -36,7 +36,7 @@ const ContractorNav = ({ filterData, active, COMPANY_ID, COMPANY_USERNAME, COMPA
           }
           variant={1 === active ? "outlined" : "outlined"}
           className={
-            1 == active
+            1 === active
               ? "btn button border-bottom-0 bg-white"
               : "btn rounded-0 border-bottom-0  rounded-0 text-light"
           }
@@ -84,8 +84,8 @@ const ContractorNav = ({ filterData, active, COMPANY_ID, COMPANY_USERNAME, COMPA
         >
           Manual Attendance
         </Button> */}
-
-        {/* <Button
+        {/* 
+        <Button
           onClick={(e) =>
             navigate("/company/employees/documents", {
               state: [filterData, COMPANY_ID,
@@ -94,9 +94,9 @@ const ContractorNav = ({ filterData, active, COMPANY_ID, COMPANY_USERNAME, COMPA
                 COMPANY_PARENT_USERNAME]
             })
           }
-          variant={4 === active ? "outlined" : "outlined"}
+          variant={2 === active ? "outlined" : "outlined"}
           className={
-            4 === active
+            2 === active
               ? "btn button border-bottom-0 bg-white"
               : "btn rounded-0 border-0  rounded-0 text-light"
           }
@@ -104,6 +104,27 @@ const ContractorNav = ({ filterData, active, COMPANY_ID, COMPANY_USERNAME, COMPA
         >
           Documents
         </Button> */}
+
+
+        <Button
+          onClick={(e) =>
+            navigate("/company/subcontractors/documents", {
+              state: [filterData, COMPANY_ID,
+                COMPANY_USERNAME,
+                COMPANY_PARENT_ID,
+                COMPANY_PARENT_USERNAME]
+            })
+          }
+          variant={2 === active ? "outlined" : "outlined"}
+          className={
+            2 === active
+              ? "btn button border-bottom-0 bg-white"
+              : "btn rounded-0 border-0  rounded-0 text-light"
+          }
+          size="small"
+        >
+          Documents
+        </Button>
       </div>
     </>
   );

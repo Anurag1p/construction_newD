@@ -1,56 +1,46 @@
-import React, { useState, useEffect, useMemo } from "react";
-import Box from "@mui/material/Box";
-import axios from "axios";
+import React, { useEffect, useState, useMemo } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import CreateProjectDoc from "./CreateProjectDoc";
+import { Box, Button } from "@mui/material";
+import { useLocation } from "react-router-dom";
+import axios from "axios";
+
+// ICONS MUI
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import DescriptionIcon from "@mui/icons-material/Description";
 import InsertChartIcon from "@mui/icons-material/InsertChart";
 import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
 import AssignmentIcon from "@mui/icons-material/Assignment";
+import { toast } from "react-toastify";
 import ExpiryReminder from "../../components/ExpiryReminder";
-import EmployeeDocCreate from "./EmployeeDocCreate";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Button } from "@mui/material";
 import { RotatingLines } from "react-loader-spinner";
-import EmployeeNav from "./EmployeeNav";
-import DocReusable from "../../components/DocReusable";
+import ProjectNav from "./ProjectNav";
 
-const EmployeeDocuments = () => {
+const ProjectDocuments = () => {
+  const filteredProject = useLocation();
+  const filterData = filteredProject?.state[0]
+  const COMPANY_ID = filteredProject?.state[1]
+  const COMPANY_USERNAME = filteredProject?.state[2]
+  const COMPANY_PARENT_ID = filteredProject?.state[3]
+  const COMPANY_PARENT_USERNAME = filteredProject?.state[4]
 
-  const filteredEmployee = useLocation();
-  const filterData = filteredEmployee?.state[0];
-  const COMPANY_ID = filteredEmployee?.state[1];
-  const COMPANY_USERNAME = filteredEmployee?.state[2];
-  const COMPANY_PARENT_ID = filteredEmployee?.state[3];
-  const COMPANY_PARENT_USERNAME = filteredEmployee?.state[4];
- console.log("filteredEmployee : =>",filteredEmployee)
- console.log("COMPANY_ID : =>",COMPANY_ID)
- console.log("COMPANY_USERNAME : =>",COMPANY_USERNAME)
- console.log("COMPANY_PARENT_ID : =>",COMPANY_PARENT_ID)
- console.log("filterData : =>",filterData)
-
-  const [deleteItem, setDeleteItem] = useState("");
-  const [open, setOpen] = useState(false);
+  const [projectDoc, setProjectDoc] = useState("");
   const [backdrop, setBackdrop] = useState(false);
-  const [empDoc, setEmpDoc] = useState("");
+  const [deleteItem, setDeleteItem] = useState("");
   const [resStatus, setResStatus] = useState(false);
 
   useEffect(() => {
-    getEmployeeDocuments();
+    fetchProjectDoc();
   }, [deleteItem]);
 
-  const getEmployeeDocuments = async () => {
+  const fetchProjectDoc = async () => {
     const requestData = {
-      DOCUMENT_PARENT_USERNAME: COMPANY_USERNAME,
-      DOCUMENT_REF_ID: filterData.EMPLOYEE_ID,
+      DOCUMENT_PARENT_USERNAME: filterData?.PROJECT_PARENT_USERNAME,
+      DOCUMENT_REF_ID: filterData?.PROJECT_ID,
     };
-
-    console.log(requestData, "requestData");
     try {
       const response = await axios.put(
-        "/api/get_all_employee_document",
+        "/api/get_all_project_document",
         requestData
       );
 
@@ -59,17 +49,14 @@ const EmployeeDocuments = () => {
       }
 
       const data = response.data;
-      console.log("requestdata", data);
-      setResStatus(true);
-      setEmpDoc(data);
-    } catch (error) {
-      setResStatus("error");
 
+      setResStatus(true);
+      setProjectDoc(data);
+    } catch (error) {
+      setResStatus(true);
       console.log("Error Fetching Data :", error);
     }
   };
-
-  // downloadfile
 
   const downloadFile = (base64Data, fileName) => {
     const link = document.createElement("a");
@@ -79,41 +66,17 @@ const EmployeeDocuments = () => {
     link.click();
     document.body.removeChild(link);
   };
-
-  // for downoad file funciton
-  const handleDownload = async (documentId, fileName) => {
-    console.log("hi", documentId);
-    try {
-      const data = {
-        DOCUMENT_ID: documentId,
-        DOCUMENT_PARENT_USERNAME: COMPANY_USERNAME,
-      };
-
-      const config = {
-        method: "put",
-        maxBodyLength: Infinity,
-        url: "/api/download_employe_document",
-        data: data,
-      };
-
-      const response = await axios.request(config);
-      downloadFile(response.data, fileName.name);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  // function for Delete the document
+  //   function for deleting the project Document
 
   const handleDelDoc = async (e, documentId) => {
     setBackdrop(true);
     const data = {
       DOCUMENT_ID: documentId,
-      DOCUMENT_PARENT_USERNAME: COMPANY_USERNAME,
+      DOCUMENT_PARENT_USERNAME: filterData?.PROJECT_PARENT_USERNAME,
     };
 
     try {
-      const response = await fetch(`/api/delete_employee_document`, {
+      const response = await fetch(`/api/delete_project_document`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -136,19 +99,27 @@ const EmployeeDocuments = () => {
     }
   };
 
-  // function to formate Size
+  // functon for download the data
+  const handleDownload = async (documentId, fileName) => {
+    try {
+      const data = {
+        DOCUMENT_ID: documentId,
+        DOCUMENT_PARENT_USERNAME: filterData?.PROJECT_PARENT_USERNAME,
+      };
 
-  const formatSize = (bytes) => {
-    if (bytes >= 1048576) {
-      return (bytes / 1048576).toFixed(2) + " MB";
-    } else if (bytes >= 1024) {
-      return (bytes / 1024).toFixed(2) + " KB";
-    } else {
-      return bytes + " Bytes";
+      const config = {
+        method: "put",
+        maxBodyLength: Infinity,
+        url: "/api/download_project_document",
+        data: data,
+      };
+
+      const response = await axios.request(config);
+      downloadFile(response.data, fileName.name);
+    } catch (error) {
+      console.log(error);
     }
   };
-
-  // function togetFileIcon
 
   const getFileIcon = (fileType) => {
     const fileTypeLowerCase = fileType.toLowerCase();
@@ -176,7 +147,27 @@ const EmployeeDocuments = () => {
     }
   };
 
-  // function to fomate Date ----
+  const renderDocumentNameCell = (cellValues) => {
+    const { name, fileType } = cellValues.value;
+    const icon = getFileIcon(fileType);
+
+    return (
+      <div style={{ display: "flex", alignItems: "center" }}>
+        {icon}
+        <span style={{ marginLeft: "8px" }}>{name}</span>
+      </div>
+    );
+  };
+
+  const formatSize = (bytes) => {
+    if (bytes >= 1048576) {
+      return (bytes / 1048576).toFixed(2) + " MB";
+    } else if (bytes >= 1024) {
+      return (bytes / 1024).toFixed(2) + " KB";
+    } else {
+      return bytes + " Bytes";
+    }
+  };
 
   const formatDate = (dateString, withTimezone = false) => {
     const options = {
@@ -195,20 +186,6 @@ const EmployeeDocuments = () => {
     );
 
     return withTimezone ? formattedDate : formattedDate.split(", ")[0];
-  };
-
-  // function for add icons in document cell ----
-
-  const renderDocumentNameCell = (cellValues) => {
-    const { name, fileType } = cellValues.value;
-    const icon = getFileIcon(fileType);
-
-    return (
-      <div style={{ display: "flex", alignItems: "center" }}>
-        {icon}
-        <span style={{ marginLeft: "8px" }}>{name}</span>
-      </div>
-    );
   };
 
   const columns = [
@@ -242,7 +219,6 @@ const EmployeeDocuments = () => {
       width: 120,
       editable: false,
     },
-
     {
       field: "documentIdType",
       headerName: "Document Type",
@@ -268,7 +244,6 @@ const EmployeeDocuments = () => {
       headerName: "Download",
       width: 120,
       renderCell: (cellValues) => {
-        console.log("heelo world", cellValues.row.documentName, cellValues.id);
         return (
           <Button
             variant="contained"
@@ -307,7 +282,7 @@ const EmployeeDocuments = () => {
 
   const rows = useMemo(() => {
     return (
-      empDoc?.result?.map((item, index) => ({
+      projectDoc?.result?.map((item, index) => ({
         id: item.DOCUMENT_ID,
         sr: index + 1,
         documentName: {
@@ -322,42 +297,90 @@ const EmployeeDocuments = () => {
         documentIdType: item.DOCUMENT_TYPE || "",
       })) || []
     );
-  }, [empDoc]);
+  }, [projectDoc]);
 
   return (
-    <Box
-      style={{
-        display: "block",
-        height: "100vh",
-      }}
-      className="box position-absolute"
-    >
-
-      <EmployeeNav
-        filterData={filterData}
-        active={4}
-        COMPANY_ID={COMPANY_ID}
-        COMPANY_USERNAME={COMPANY_USERNAME}
-        COMPANY_PARENT_ID={COMPANY_PARENT_ID}
-        COMPANY_PARENT_USERNAME={COMPANY_PARENT_USERNAME}
-      />
-      <div className="myscreen p-3">
-        <>
-          <DocReusable
-            createEndpoint="/api/create_document"
-            getDocEndPoint="/api/get_all_document"
-            documentType="Employee Document"
-            deleteApiEndpoint="/api/delete_document"
-            downloadApiEndpoint="/api/download_document"
-            DOCUMENT_REF_ID={filterData?.EMPLOYEE_ID}
-            DOCUMENT_PARENT_USERNAME={filterData?.EMPLOYEE_USERNAME}
-            DOCUMENT_ADMIN_USERNAME={filterData?.EMPLOYEE_MEMBER_PARENT_USERNAME}
-          />
-
-        </>
-      </div>
-    </Box>
+    <>
+        <Box
+          style={{
+            display: "block",
+            height: "100vh",
+          }}
+          className="box position-absolute"
+        >
+          <ProjectNav filterData={filterData} active={4}  COMPANY_ID={COMPANY_ID}  COMPANY_USERNAME={COMPANY_USERNAME} COMPANY_PARENT_ID={COMPANY_PARENT_ID} COMPANY_PARENT_USERNAME={COMPANY_PARENT_USERNAME} />
+          <div className="myscreen p-3">
+            <CreateProjectDoc
+              PROJECT_PARENT_USERNAME={filterData?.PROJECT_PARENT_USERNAME}
+              PROJECT_ID={filterData?.PROJECT_ID}
+              update={fetchProjectDoc}
+            />
+            {resStatus === true ? (
+              <Box sx={{ height: 400, width: "100%" }}>
+                <DataGrid
+                  rows={rows}
+                  columns={columns}
+                  initialState={{
+                    pagination: {
+                      paginationModel: {
+                        pageSize: 5,
+                      },
+                    },
+                  }}
+                  density="compact"
+                  pageSizeOptions={[10]}
+                  disableRowSelectionOnClick
+                  sx={{ height: "80vh" }}
+                  getRowId={(row) => row.id}
+                  localeText={{
+                    noRowsLabel:
+                      rows.length === 0 && "No Document Available...",
+                  }}
+                />
+              </Box>
+            ) : resStatus === "error" ? (
+              <div
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%,-50%)",
+                }}
+              >
+                <small className="text-dark">
+                  <p>Check your connection and try again. :(</p>
+                  <center>
+                    <button
+                      onClick={fetchProjectDoc}
+                      className="btn btn-sm btn-secondary"
+                    >
+                      Retry
+                    </button>
+                  </center>
+                </small>
+              </div>
+            ) : (
+              <div
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%,-50%)",
+                }}
+              >
+                <RotatingLines
+                  strokeColor="#2D5169"
+                  strokeWidth="5"
+                  animationDuration="0.75"
+                  width="50"
+                  visible={true}
+                />
+              </div>
+            )}
+          </div>
+        </Box>
+    </>
   );
 };
 
-export default EmployeeDocuments;
+export default ProjectDocuments;

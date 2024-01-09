@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import country from "../Api/countriess.json";
+import country from "../../Api/countriess.json";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 // import env from "react-dotenv";
@@ -181,6 +181,7 @@ export default function EditSubcontract(props) {
             >
                 <Box sx={style}>
                     <form onSubmit={handleSubmit}>
+                        <h5>Edit Subcontractor</h5>
                         <div className="row py-2">
                             <div className="form-group col-xl-4">
                                 <label>Subcontract Email</label>
@@ -202,9 +203,8 @@ export default function EditSubcontract(props) {
                                 <label>Subcontract Name</label>
                                 <input
                                     type="text"
-                                    className={`form-control form-control-2 rounded-0 ${
-                                        nameError ? "is-invalid" : ""
-                                      }`}
+                                    className={`form-control form-control-2 rounded-0 ${nameError ? "is-invalid" : ""
+                                        }`}
                                     id="inputname"
                                     placeholder="Project Name"
                                     value={editSubcontract.SUBCONTRACTOR_NAME}
@@ -212,17 +212,16 @@ export default function EditSubcontract(props) {
                                     onChange={handleEdit}
 
                                 />
-                                   {nameError && (
-                  <div className="invalid-feedback">{nameError}</div>
-                )}
+                                {nameError && (
+                                    <div className="invalid-feedback">{nameError}</div>
+                                )}
                             </div>
                             <div className="form-group col-xl-4">
                                 <label>Contact</label>
                                 <input
                                     type="number"
-                                    className={`form-control form-control-2 rounded-0 ${
-                                        phoneError ? "is-invalid" : ""
-                                      }`}
+                                    className={`form-control form-control-2 rounded-0 ${phoneError ? "is-invalid" : ""
+                                        }`}
                                     id="inputPassword4"
                                     placeholder="Enter Phone Number"
                                     name="SUBCONTRACTOR_PHONE"
@@ -230,9 +229,9 @@ export default function EditSubcontract(props) {
                                     onChange={handleEdit}
 
                                 />
-                                   {phoneError && (
-                  <div className="invalid-feedback">{phoneError}</div>
-                )}
+                                {phoneError && (
+                                    <div className="invalid-feedback">{phoneError}</div>
+                                )}
                             </div>
                         </div>
                         <div className="row py-2">
