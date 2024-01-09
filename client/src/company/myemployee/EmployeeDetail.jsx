@@ -84,16 +84,22 @@ const EmployeeDetail = () => {
         });
         fetchProject();
         fetchData();
-        if (response.data.result?.employee) {
-        } else {
-          toast.success("Project Already Assign", {
-            position: toast.POSITION.TOP_CENTER,
-            autoClose: 1000,
-          });
-        }
+        // if (response.data.result?.employee) {
+        // } else {
+        //   toast.error("Project Already Assign",{
+        //     position: toast.POSITION.TOP_CENTER,
+        //     autoClose: 1000,
+        //   });
+
+        // }
       })
       .catch((error) => {
         console.error(error, "ERR");
+        setSelectedProject("");
+        toast.error("Project Already Assigned", {
+          position: toast.POSITION.TOP_CENTER,
+          autoClose: 1000,
+        });
       });
   };
 

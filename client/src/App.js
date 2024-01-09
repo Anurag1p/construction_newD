@@ -22,7 +22,6 @@ import AttendanceReport from "./company/attendance/AttendanceAcknowledge";
 import Document from "./Document/Documents";
 import Signup from "./auth/Signup";
 import { auth } from "./firebase";
-import SubContract from "./subcontract/SubContract";
 import AdminLogin from "./auth/AdminLogin";
 import Firecreate from "./components/Firecreate";
 import UserLogin from "./auth/UserLogin";
