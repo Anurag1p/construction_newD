@@ -13,7 +13,9 @@ import { useSelector } from "react-redux";
 
 
 export default function ProjectCreate() {
+  
   const companyData = useSelector(prev => prev.companyLogin.user)
+
   // extract company
   const COMPANY_ID = companyData[0];
   const COMPANY_USERNAME = companyData[1];

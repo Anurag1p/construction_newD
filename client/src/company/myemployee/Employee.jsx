@@ -256,7 +256,7 @@ const Employee = ({
       />
       <Box className="box" style={{ background: "#277099" }}>
         {/* <Navbar toggle={() => setOpenNav((e) => !e)} name={COMPANY_USERNAME} /> */}
-        {resStatus == true ? (<><button
+        {resStatus === true ? (<><button
           variant={"outlined"}
           className={
             display === "unarchive"

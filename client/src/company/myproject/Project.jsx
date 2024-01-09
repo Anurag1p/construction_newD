@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
 import { RotatingLines } from "react-loader-spinner";
 import { useSelector } from "react-redux";
+import Animations from "../../components/Animations";
 
 const Project = ({
   COMPANY_ID,
@@ -177,8 +178,8 @@ const Project = ({
 
         <div className="myscreen p-3">
           <Box style={{ height: "100%", padding: 0, paddingBottom: "0" }}>
-            <>
-              {projectAllData ? (<DataGrid
+            <>    
+             { projectAllData ? (<DataGrid
                 sx={{ border: "none" }}
                 rows={rows}
                 columns={columns}
@@ -239,7 +240,7 @@ const Project = ({
                     />
                   </div>
                 </Box>
-              )}
+              )} 
             </>
           </Box>
         </div>

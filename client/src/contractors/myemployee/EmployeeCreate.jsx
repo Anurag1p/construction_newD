@@ -223,11 +223,11 @@ export default function AddEmployee({ COMPANY_ID, COMPANY_USERNAME, COMPANY_PARE
                 {" "}
                 <div className="form-group col-xl-6 py-1">
 
-                  <label for="inputPassword4">Date Of Birth</label>
+                  <label for="dob">Date Of Birth</label>
                   <input
                     type="date"
                     className="form-control form-control-2 rounded-0"
-                    id="inputPassword4"
+                    id="dob"
                     placeholder="Enter Date of birth"
                     value={createEmployee.EMPLOYEE_DOB}
                     name="EMPLOYEE_DOB"
@@ -330,9 +330,9 @@ export default function AddEmployee({ COMPANY_ID, COMPANY_USERNAME, COMPANY_PARE
                   />
                 </div>
                 <div className="form-group col-xl-4 py-1">
-                  <label for="inputPassword4">Employee Role</label>
+                  <label for="emprole">Employee Role</label>
                   <select
-                    id="inputqual"
+                    id="emprole"
                     className="form-control form-control-2 rounded-0 border"
                     value={createEmployee.EMPLOYEE_ROLE}
                     name="EMPLOYEE_ROLE"
@@ -351,9 +351,9 @@ export default function AddEmployee({ COMPANY_ID, COMPANY_USERNAME, COMPANY_PARE
               </div>
               <div className="row">
                 <div className="form-group col-xl-4 py-1 ">
-                  <label for="inputqual">Employement Type</label>
+                  <label for="employmentype">Employement Type</label>
                   <select
-                    id="inputqual"
+                    id="employmentype"
                     className="form-control form-control-2 rounded-0 border"
                     value={createEmployee.EMPLOYEE_EMPLMNTTYPE}
                     name="EMPLOYEE_EMPLMNTTYPE"
@@ -368,11 +368,11 @@ export default function AddEmployee({ COMPANY_ID, COMPANY_USERNAME, COMPANY_PARE
                 </div>
 
                 <div className="form-group col-xl-4 py-1">
-                  <label for="inputPassword4">Hired Date</label>
+                  <label for="hireDate">Hired Date</label>
                   <input
                     type="date"
                     className="form-control form-control-2 rounded-0"
-                    id="inputPassword4"
+                    id="hireDate"
                     placeholder="Enter hire date"
                     value={createEmployee.EMPLOYEE_HIRE_DATE}
                     name="EMPLOYEE_HIRE_DATE"

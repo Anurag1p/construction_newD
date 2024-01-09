@@ -124,11 +124,6 @@ const EmployeeDetail = () => {
     fetchData();
   }, [filterData]);
 
-
-
-
-
-
   const columns = [
     { field: "PROJECT_ID", headerName: "ID", width: 60 },
     {

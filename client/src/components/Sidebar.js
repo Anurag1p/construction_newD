@@ -79,7 +79,7 @@ const Sidebar = ({
             className="sidebar-header d-flex p-3 f-20"
             style={{ justifyContent: "space-between" }}
           >
-            <h5 className="pt-2">{filterData?.COMPANY_NAME.toString(0,10)}</h5>
+            <h5 className="pt-2">{filterData?.COMPANY_NAME?.toString(0,10)}</h5>
             <Tooltip title={COMPANY_USERNAME} sx={{zIndex:26}}>
               <Avatar>{filterData?.COMPANY_NAME?.substring(0, 1)}</Avatar>
             </Tooltip>

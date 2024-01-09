@@ -435,7 +435,7 @@ const EmployeeManual = (props) => {
                 color="#fff"
                 radius="2"
                 ariaLabel="three-dots-loading"
-                wrapperStyle={{bottom:"7px", right:"2px"}}
+                wrapperStyle={{ bottom: "7px", right: "2px" }}
                 wrapperClass="position-absolute"
               /></>}
             </button>
@@ -477,8 +477,8 @@ const EmployeeManual = (props) => {
       },
       cellClassName: (cellValues) => {
         return cellValues.row.ATTENDANCE_OUT
-        ? "bg-success text-white border px-0"
-        : "bg-secondary text-white border px-0";
+          ? "bg-success text-white border px-0"
+          : "bg-secondary text-white border px-0";
       },
     },
 
@@ -501,18 +501,18 @@ const EmployeeManual = (props) => {
               type="submit"
               onClick={() => HandleUpdateOut(cellValues.row)}
             >
-               {updateOut ? <>Update</> : <>Updating<ThreeDots
+              {updateOut ? <>Update</> : <>Updating<ThreeDots
                 visible={true}
                 height="12"
                 width="12"
                 color="#fff"
                 radius="2"
                 ariaLabel="three-dots-loading"
-                wrapperStyle={{bottom:"7px", right:"2px"}}
+                wrapperStyle={{ bottom: "7px", right: "2px" }}
                 wrapperClass="position-absolute"
               /></>}
             </button>
-            
+
           </>
         );
       },
