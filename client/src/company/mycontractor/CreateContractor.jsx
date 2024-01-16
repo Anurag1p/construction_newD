@@ -10,6 +10,8 @@ import "react-toastify/dist/ReactToastify.css";
 // import env from "react-dotenv";
 
 import { Button, Grid } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { setSubcontractor } from "../../redux/slice/SubContractorSlice";
 
 const style = {
   position: "absolute",
@@ -35,6 +37,8 @@ export default function CreateContractor(props) {
     SUBCONTRACTOR_MEMBER_PARENT_ID: props.COMPANY_PARENT_ID,
     SUBCONTRACTOR_MEMBER_PARENT_USERNAME: props.COMPANY_PARENT_USERNAME,
   });
+
+  const dispatch = useDispatch();
 
   const subcontractorRoleOptions = [
     { value: "Painter", label: "Painter" },
@@ -128,11 +132,11 @@ export default function CreateContractor(props) {
         } else if (response.data.operation === "successfull") {
           setResStatus(false);
           handleClose();
+          dispatch(setSubcontractor(response.data.result))
           toast.success("Subcontract Created successfully!", {
             position: toast.POSITION.TOP_CENTER,
           });
-          props.Update();
-
+          // props.Update();
         }
       })
       .catch((error) => {
@@ -169,7 +173,7 @@ export default function CreateContractor(props) {
                 <input
                   type="text"
                   className="form-control form-control-2 rounded-0"
-                  placeholder="Username"
+                  placeholder="Enter Subcontractor Email"
                   value={createSubcontract.SUBCONTRACTOR_USERNAME}
                   name="SUBCONTRACTOR_USERNAME"
                   onChange={handleCreate}
@@ -181,7 +185,7 @@ export default function CreateContractor(props) {
                   type="text"
                   className="form-control form-control-2 rounded-0"
                   id="inputname"
-                  placeholder="Project Name"
+                  placeholder="Enter Subcontractor Name"
                   value={createSubcontract.SUBCONTRACTOR_NAME}
                   name="SUBCONTRACTOR_NAME"
                   onChange={handleCreate}
@@ -200,30 +204,6 @@ export default function CreateContractor(props) {
                 />
               </div>
             </div>
-            {/* <div className="row py-2">
-              <div className="form-group col-xl-6">
-                <label>Project start date</label>
-                <input
-                  type="date"
-                  value={createSubcontract.SUBCONTRACTOR_START_DATE}
-                  name="SUBCONTRACTOR_START_DATE"
-                  onChange={handleCreate}
-                  className="form-control form-control-2 rounded-0"
-                //required
-                />
-              </div>
-              <div className="form-group col-xl-6">
-                <label>Project End date</label>
-                <input
-                  type="date"
-                  value={createSubcontract.SUBCONTRACTOR_END_DATE}
-                  name="SUBCONTRACTOR_END_DATE"
-                  onChange={handleCreate}
-                  className="form-control form-control-2 rounded-0"
-                //required
-                />
-              </div>
-            </div> */}
             <div className="row py-2">
               <div className="form-group col-xl-6">
                 <label>Subcontract ROLE</label>

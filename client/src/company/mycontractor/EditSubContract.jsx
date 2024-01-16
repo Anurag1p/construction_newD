@@ -9,6 +9,8 @@ import "react-toastify/dist/ReactToastify.css";
 // import env from "react-dotenv";
 
 import { Button, Grid } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { setSubcontractor } from "../../redux/slice/SubContractorSlice";
 
 const style = {
     position: "absolute",
@@ -52,7 +54,7 @@ export default function EditSubcontract(props) {
     });
 
     const editsubcontracts = props?.editsubcontract.row
-
+    const dispatch = useDispatch();
     useEffect(() => {
         if (editsubcontracts) {
             setEditsubcontract((prevState) => ({
@@ -151,9 +153,12 @@ export default function EditSubcontract(props) {
                     } else if (response.data.operation === "successfull") {
                         toast.success("Subcontract Updated successfully!", {
                             position: toast.POSITION.TOP_CENTER,
+                            autoClose: 1000,
                         });
-                        props.refetch();
+                        // props.refetch();
+
                         setEditsubcontract({});
+                        dispatch(setSubcontractor(response.data.result))
                         setOpen(false);
                     }
                 })

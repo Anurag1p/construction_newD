@@ -10,44 +10,57 @@ import {
   PURGE,
   REGISTER,
 } from 'redux-persist/es/constants';
-import CompanyLoginSlice from "./slices/CompanyLoginSlice";
-import AdminSlice from "./slices/AdminSlice";
+import CompanyLoginSlice from "./slice/CompanyLoginSlice";
+import AdminSlice from "./slice/AdminSlice";
 import AllCompanyDetail from "./slices/getallCompanySlice";
-import AllProjectDetail from "./slices/getallProjectSlice"
+// import AllProjectDetail from "./slices/getallProjectSlice"
 import AllAttendanceDetail from "./slices/getAttendanceSlice";
-import AllEmployeeDetail from "./slices/getEmployee";
+// import AllEmployeeDetail from "./slices/getEmployee";
 import AllContractorDetail from "./slices/getContrctorSlice";
 import AllDocumentDetail from "./slices/getAllDocument"
-import EmployeeLogin from "./slices/EmployeeLogin"
-import setOneCompany  from "./slices/getOneCompanySlice";
+import EmployeeLogin from "./slice/EmployeeLogin"
+import setOneCompany from "./slices/getOneCompanySlice";
 
+// Redux setup Anuarag 
+
+import getallProjectSlice from "./slice/getallProjectSlice";
+import SingleCompData from "./slice/SingleCompSlice";
+import EmployeeDataSlice from "./slice/EmployeeDataSlice";
+import companyDoc from "./slice/GetCompanyDocSlice";
+import AllSubcontractor from "./slice/SubContractorSlice"
 
 const persistConfig = {
   key: 'root',
   version: 1,
-  storage:storageSession,
+  storage: storageSession,
 };
 
-const persistedLoginReducer = persistReducer(persistConfig,CompanyLoginSlice);
-const persistedAdminReducer = persistReducer(persistConfig,AdminSlice)
-const persistedEmployeeReducer = persistReducer(persistConfig,EmployeeLogin)
-const persistedCompanyReducer = persistReducer(persistConfig,setOneCompany)
-const persistedAllCompanyReducer = persistReducer(persistConfig,AllCompanyDetail)
-const persistedAllProjectDetail = persistReducer(persistConfig,AllProjectDetail)
+const persistedLoginReducer = persistReducer(persistConfig, CompanyLoginSlice);
+const persistedAdminReducer = persistReducer(persistConfig, AdminSlice)
+const persistedEmployeeReducer = persistReducer(persistConfig, EmployeeLogin)
+
+// const persistedCompanyReducer = persistReducer(persistConfig,setOneCompany)
+// const persistedAllCompanyReducer = persistReducer(persistConfig,AllCompanyDetail)
+// const persistedAllProjectDetail = persistReducer(persistConfig,AllProjectDetail)
 
 
 
 const rootReducer = combineReducers({
   companyLogin: persistedLoginReducer,
-  adminLogin :persistedAdminReducer,
-  employeeLogin:persistedEmployeeReducer,
-  allCompany:AllCompanyDetail,
-  allProject:AllProjectDetail,
-  allEmployee:AllEmployeeDetail,
-  allContractor:AllContractorDetail,
-  allAttendation:AllAttendanceDetail,
-  allDocument:AllDocumentDetail,
-  setOneCompany:persistedCompanyReducer
+  adminLogin: persistedAdminReducer,
+  employeeLogin: persistedEmployeeReducer,
+  allCompany: AllCompanyDetail,
+  // allProject:AllProjectDetail,
+  // allEmployee:AllEmployeeDetail,
+  allContractor: AllContractorDetail,
+  allAttendation: AllAttendanceDetail,
+  allDocument: AllDocumentDetail,
+  allProjectData: getallProjectSlice,
+  singleCompData: SingleCompData,
+  allEmployee: EmployeeDataSlice,
+  companyDocuments: companyDoc,
+  allsubcontractor: AllSubcontractor,
+  // setOneCompany:persistedCompanyReducer
 
   // Add other reducers here if needed
 });

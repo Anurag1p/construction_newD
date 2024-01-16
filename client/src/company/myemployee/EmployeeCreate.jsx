@@ -1,40 +1,58 @@
-import React from "react";
-import { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-import { useNavigate } from "react-router-dom";
-import {toast } from "react-toastify";
-import {Container } from "@mui/material";
+import axios from "axios";
 import country from "../../jsonlist/countriess.json";
-import employeeRole from "../../jsonlist/employeeRole.json"
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import employeeRole from "../../jsonlist/employeeRole.json";
+import { Button, Container } from "@mui/material";
+import { useSelector, useDispatch } from "react-redux";
+
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import {
   validatePhoneNumber,
+  validateUsername,
   validateEmail,
+  validatePassword
 } from "../../components/Validation";
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: "60%",
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 4,
-  borderRadius: 4,
-};
+import { auth } from "../../firebase";
+import { getEmployeeData, setEmployeeData } from "../../redux/slice/EmployeeDataSlice"
 
 
-export default function AddEmployee({ COMPANY_ID, COMPANY_USERNAME, COMPANY_PARENT_ID, COMPANY_PARENT_USERNAME, refetch }) {
+export default function AddEmployee({ Update }) {
 
-
-  const navigate = useNavigate();
+  const companyData = useSelector((prev) => prev.companyLogin.user);
+  // const { previousEmployees, currentEmployees } = useSelector((state) => state.EmployeeData);
+  const COMPANY_ID = companyData[0];
+  const COMPANY_USERNAME = companyData[1];
+  const COMPANY_PARENT_ID = companyData[2];
+  const COMPANY_PARENT_USERNAME = companyData[3];
+  const dispatch = useDispatch();
+  // const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const [createEmployee, setCreateEmployee] = useState({});
+  const [createEmployee, setCreateEmployee] = useState({
+    EMPLOYEE_NAME: "",
+    EMPLOYEE_COUNTRY: "",
+    EMPLOYEE_STATE: "",
+    EMPLOYEE_CITY: "",
+    EMPLOYEE_PHONE: "",
+    EMPLOYEE_HOURLY_WAGE: "",
+    EMPLOYEE_ROLE: "",
+    EMPLOYEE_EMPLMNTTYPE: "",
+    EMPLOYEE_DOB: "",
+    EMPLOYEE_HIRE_DATE: "",
+    EMPLOYEE_ADD: "",
+    EMPLOYEE_USERNAME: "",
+    EMPLOYEE_PASSWORD: "",
+    EMPLOYEE_MEMBER_PARENT_USERNAME: "",
+    EMPLOYEE_PARENT_ID: "",
+    EMPLOYEE_PARENT_USERNAME: "",
+    EMPLOYEE_MEMBER_PARENT_ID: "",
+  });
 
   const [errorMsg, setErrorMsg] = useState("");
   const [phoneError, setPhoneError] = useState("");
@@ -59,11 +77,6 @@ export default function AddEmployee({ COMPANY_ID, COMPANY_USERNAME, COMPANY_PARE
   const availableCities = availableState?.states?.find(
     (s) => s.name === createEmployee.EMPLOYEE_STATE
   );
-
-
-
-
-
 
   // const handleCreate = (e) => {
   //   setCreateEmployee({ ...createEmployee, [e.target.name]: e.target.value });
@@ -98,8 +111,6 @@ export default function AddEmployee({ COMPANY_ID, COMPANY_USERNAME, COMPANY_PARE
       return;
     }
 
-
-
     if (!isValidName) {
       setNameError("Name should not be empty");
       return;
@@ -111,25 +122,27 @@ export default function AddEmployee({ COMPANY_ID, COMPANY_USERNAME, COMPANY_PARE
       return;
     }
 
-
-
     // Perform API validation and request
     axios
       .post("/api/create_employee", createEmployee)
       .then((response) => {
         if (response.data.operation === "failed") {
           setEmailError(response.data.errorMsg)
-        } else if (response.data.operation === "successfull") {
-          toast.success("Employee Created successfully!", {
+          toast.error("Something went wrong", {
             position: toast.POSITION.TOP_CENTER,
             autoClose: 1000,
 
           });
-          // handleSubmission()
+        } else if (response.data.operation === "successfull") {
 
-
-          setCreateEmployee({})
-          refetch()
+          toast.success("Employee Created successfully!", {
+            position: toast.POSITION.TOP_CENTER,
+            autoClose: 1000,
+            
+          });
+          setCreateEmployee({});
+          // dispatch(setEmployeeData(response.data.result));
+          dispatch(setEmployeeData(response.data.result));
           setOpen(false);
 
         }
@@ -139,15 +152,13 @@ export default function AddEmployee({ COMPANY_ID, COMPANY_USERNAME, COMPANY_PARE
       });
   };
 
-
   return (
     < >
-      
       <button
         onClick={handleOpen}
         sx={{ color: "#277099" }}
         className="btn btn-sm btn-primary rounded-0 border-0  rounded-0 text-light"
-     
+
         size="small"
       >
         + Add New Employee
@@ -158,7 +169,7 @@ export default function AddEmployee({ COMPANY_ID, COMPANY_USERNAME, COMPANY_PARE
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
-        style={{zIndex:9999999}}
+        style={{ zIndex: 9999999 }}
       >
         <Container
           id="content"
@@ -236,7 +247,7 @@ export default function AddEmployee({ COMPANY_ID, COMPANY_USERNAME, COMPANY_PARE
                   />
                 </div>
 
-    
+
                 <div className="form-group col-xl-6 py-1">
 
                   <label>Country</label>
@@ -250,7 +261,7 @@ export default function AddEmployee({ COMPANY_ID, COMPANY_USERNAME, COMPANY_PARE
                   >
                     <option value="">--Choose Country--</option>
                     {country?.map((value, key) => {
-                   
+
                       return (
                         <option value={value.name} key={key}>
                           {value.name}
@@ -310,7 +321,7 @@ export default function AddEmployee({ COMPANY_ID, COMPANY_USERNAME, COMPANY_PARE
                       return (
                         <option value={e.name} key={key}>
 
-                          
+
                           {e.name}
                         </option>
                       );

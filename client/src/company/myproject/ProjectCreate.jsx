@@ -7,13 +7,14 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import projectList from "../../jsonlist/typeOfProject.json";
 import { Button } from "@mui/material";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setAllproject } from "../../redux/slice/getallProjectSlice";
 
 
 
 
 export default function ProjectCreate() {
-  
+
   const companyData = useSelector(prev => prev.companyLogin.user)
 
   // extract company
@@ -21,7 +22,7 @@ export default function ProjectCreate() {
   const COMPANY_USERNAME = companyData[1];
   const COMPANY_PARENT_ID = companyData[2];
   const COMPANY_PARENT_USERNAME = companyData[3];
-
+  const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -133,7 +134,7 @@ export default function ProjectCreate() {
             position: toast.POSITION.TOP_CENTER,
             autoClose: 1000,
           });
-          // Update();
+          dispatch(setAllproject(response.data.result));
           setOpen(false);
           setCreateProject({});
         }

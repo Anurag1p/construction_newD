@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
@@ -25,25 +25,67 @@ export default function EmployeeEdit(props) {
   const [submitting, setSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+
+  const [editEmployee, setEditEmployee] = useState({
+    EMPLOYEE_USERNAME: '',
+    EMPLOYEE_NAME: '',
+    EMPLOYEE_EMAIL: '',
+    EMPLOYEE_STATE: '',
+    EMPLOYEE_CITY: '',
+    EMPLOYEE_COUNTRY: '',
+    EMPLOYEE_PHONE: '',
+    EMPLOYEE_HOURLY_WAGE: '',
+    EMPLOYEE_ROLE: '',
+    EMPLOYEE_EMPLMNTTYPE: '',
+    EMPLOYEE_DOB: '',
+    EMPLOYEE_HIRE_DATE: '',
+    EMPLOYEE_ADD: '',
+    EMPLOYEE_PASSWORD: '',
+  });
+
   const editdata = props?.edit.row;
   // console.log("first", editdata)
 
-  const [editEmployee, setEditEmployee] = useState({
-    EMPLOYEE_USERNAME: editdata.EMPLOYEE_USERNAME,
-    EMPLOYEE_NAME: editdata.EMPLOYEE_NAME,
-    EMPLOYEE_EMAIL: editdata.EMPLOYEE_EMAIL,
-    EMPLOYEE_STATE: editdata.EMPLOYEE_STATE,
-    EMPLOYEE_CITY: editdata.EMPLOYEE_CITY,
-    EMPLOYEE_COUNTRY: editdata.EMPLOYEE_COUNTRY,
-    EMPLOYEE_PHONE: editdata.EMPLOYEE_PHONE,
-    EMPLOYEE_HOURLY_WAGE: editdata.EMPLOYEE_HOURLY_WAGE,
-    EMPLOYEE_ROLE: editdata.EMPLOYEE_ROLE,
-    EMPLOYEE_EMPLMNTTYPE: editdata.EMPLOYEE_EMPLMNTTYPE,
-    EMPLOYEE_DOB: editdata.EMPLOYEE_DOB,
-    EMPLOYEE_HIRE_DATE: editdata.EMPLOYEE_HIRE_DATE,
-    EMPLOYEE_ADD: editdata.EMPLOYEE_ADD,
-    EMPLOYEE_PASSWORD: editdata.EMPLOYEE_PASSWORD,
-  });
+
+
+  useEffect(() => {
+    if (editEmployee) {
+      setEditEmployee((prevState) => ({
+        ...prevState,
+        EMPLOYEE_USERNAME: editdata.EMPLOYEE_USERNAME,
+        EMPLOYEE_NAME: editdata.EMPLOYEE_NAME,
+        EMPLOYEE_EMAIL: editdata.EMPLOYEE_EMAIL,
+        EMPLOYEE_STATE: editdata.EMPLOYEE_STATE,
+        EMPLOYEE_CITY: editdata.EMPLOYEE_CITY,
+        EMPLOYEE_COUNTRY: editdata.EMPLOYEE_COUNTRY,
+        EMPLOYEE_PHONE: editdata.EMPLOYEE_PHONE,
+        EMPLOYEE_HOURLY_WAGE: editdata.EMPLOYEE_HOURLY_WAGE,
+        EMPLOYEE_ROLE: editdata.EMPLOYEE_ROLE,
+        EMPLOYEE_EMPLMNTTYPE: editdata.EMPLOYEE_EMPLMNTTYPE,
+        EMPLOYEE_DOB: editdata.EMPLOYEE_DOB,
+        EMPLOYEE_HIRE_DATE: editdata.EMPLOYEE_HIRE_DATE,
+        EMPLOYEE_ADD: editdata.EMPLOYEE_ADD,
+        EMPLOYEE_PASSWORD: editdata.EMPLOYEE_PASSWORD,
+      }))
+    }
+  },[editEmployee])
+
+  // const [editEmployee, setEditEmployee] = useState({
+  //   EMPLOYEE_USERNAME: editdata.EMPLOYEE_USERNAME,
+  //   EMPLOYEE_NAME: editdata.EMPLOYEE_NAME,
+  //   EMPLOYEE_EMAIL: editdata.EMPLOYEE_EMAIL,
+  //   EMPLOYEE_STATE: editdata.EMPLOYEE_STATE,
+  //   EMPLOYEE_CITY: editdata.EMPLOYEE_CITY,
+  //   EMPLOYEE_COUNTRY: editdata.EMPLOYEE_COUNTRY,
+  //   EMPLOYEE_PHONE: editdata.EMPLOYEE_PHONE,
+  //   EMPLOYEE_HOURLY_WAGE: editdata.EMPLOYEE_HOURLY_WAGE,
+  //   EMPLOYEE_ROLE: editdata.EMPLOYEE_ROLE,
+  //   EMPLOYEE_EMPLMNTTYPE: editdata.EMPLOYEE_EMPLMNTTYPE,
+  //   EMPLOYEE_DOB: editdata.EMPLOYEE_DOB,
+  //   EMPLOYEE_HIRE_DATE: editdata.EMPLOYEE_HIRE_DATE,
+  //   EMPLOYEE_ADD: editdata.EMPLOYEE_ADD,
+  //   EMPLOYEE_PASSWORD: editdata.EMPLOYEE_PASSWORD,
+  // });
 
   // console.log(editEmployee,"edit alll")
 
@@ -55,20 +97,23 @@ export default function EmployeeEdit(props) {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const handleCreate = (e) => {
+  const handleEdit = (e) => {
     setEditEmployee((prev) => {
       return { ...prev, [e.target.name]: e.target.value };
     });
   };
 
+
+
+
   const availableState = country?.find(
     (c) => c.name === editEmployee.EMPLOYEE_COUNTRY
   );
+  console.log(availableState, "country")
 
   const availableCities = availableState?.states?.find(
     (s) => s.name === editEmployee.EMPLOYEE_STATE
   );
-
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
@@ -154,7 +199,7 @@ export default function EmployeeEdit(props) {
                     placeholder="Edit your Name"
                     value={editEmployee.EMPLOYEE_NAME}
                     name="EMPLOYEE_NAME"
-                    // onChange={handleCreate}
+                    // onChange={handleEdit}
                     onChange={(event) =>
                       setEditEmployee((prev) => ({
                         ...prev,
@@ -175,7 +220,7 @@ export default function EmployeeEdit(props) {
                     placeholder="Enter Your Number"
                     value={editEmployee.EMPLOYEE_PHONE}
                     name="EMPLOYEE_PHONE"
-                    onChange={handleCreate}
+                    onChange={handleEdit}
                     required
                   />
                 </div>{" "}
@@ -188,7 +233,7 @@ export default function EmployeeEdit(props) {
                     placeholder="Enter Date of birth"
                     value={editEmployee.EMPLOYEE_DOB}
                     name="EMPLOYEE_DOB"
-                    onChange={handleCreate}
+                    onChange={handleEdit}
                     required
                   />
                 </div>
@@ -200,7 +245,7 @@ export default function EmployeeEdit(props) {
                     placeholder="Country"
                     name="EMPLOYEE_COUNTRY"
                     value={editEmployee.EMPLOYEE_COUNTRY}
-                    onChange={handleCreate}
+                    onChange={handleEdit}
                   >
                     <option value="">--Choose Country--</option>
                     {country?.map((value, key) => {
@@ -211,6 +256,7 @@ export default function EmployeeEdit(props) {
                       );
                     })}
                   </select>
+
                 </div>
                 <div className="form-group col-xl-6 py-1">
                   <label>State</label>
@@ -219,7 +265,7 @@ export default function EmployeeEdit(props) {
                     placeholder="State"
                     name="EMPLOYEE_STATE"
                     value={editEmployee.EMPLOYEE_STATE}
-                    onChange={handleCreate}
+                    onChange={handleEdit}
                   >
                     <option value="">--Choose State--</option>
                     {availableState?.states?.map((e, key) => {
@@ -244,7 +290,7 @@ export default function EmployeeEdit(props) {
                       placeholder="Enter Address"
                       value={editEmployee.EMPLOYEE_ADD}
                       name="EMPLOYEE_ADD"
-                      onChange={handleCreate}
+                      onChange={handleEdit}
                     />
                   </div>
                 </div>
@@ -255,7 +301,7 @@ export default function EmployeeEdit(props) {
                     placeholder="City"
                     name="EMPLOYEE_CITY"
                     value={editEmployee.EMPLOYEE_CITY}
-                    onChange={handleCreate}
+                    onChange={handleEdit}
                   >
                     <option value="">--Choose City--</option>
                     {availableCities?.cities?.map((e, key) => {
@@ -276,7 +322,7 @@ export default function EmployeeEdit(props) {
                     placeholder="Enter your Hourly wages"
                     value={editEmployee.EMPLOYEE_HOURLY_WAGE}
                     name="EMPLOYEE_HOURLY_WAGE"
-                    onChange={handleCreate}
+                    onChange={handleEdit}
                     required
                   />
                 </div>
@@ -287,7 +333,7 @@ export default function EmployeeEdit(props) {
                     className="form-control form-control-2 rounded-0 border"
                     value={editEmployee.EMPLOYEE_ROLE}
                     name="EMPLOYEE_ROLE"
-                    onChange={handleCreate}
+                    onChange={handleEdit}
                     required
                   >
                     <option selected>Choose role...</option>
@@ -308,7 +354,7 @@ export default function EmployeeEdit(props) {
                     className="form-control form-control-2 rounded-0 border"
                     value={editEmployee.EMPLOYEE_EMPLMNTTYPE}
                     name="EMPLOYEE_EMPLMNTTYPE"
-                    onChange={handleCreate}
+                    onChange={handleEdit}
                     required
                   >
                     <option selected>Choose type...</option>
@@ -328,7 +374,7 @@ export default function EmployeeEdit(props) {
                     placeholder="Enter hire date"
                     value={editEmployee.EMPLOYEE_HIRE_DATE}
                     name="EMPLOYEE_HIRE_DATE"
-                    onChange={handleCreate}
+                    onChange={handleEdit}
                     required
                   />
                 </div>

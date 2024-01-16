@@ -31,6 +31,11 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import { RotatingLines } from "react-loader-spinner";
 import Animation from "./Animations";
 
+// import for redux setup 
+import {setDocument} from "../redux/slice/GetCompanyDocSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {getAllDocuments } from "../redux/slice/GetCompanyDocSlice"
+
 
 const style = {
     position: "absolute",
@@ -55,15 +60,20 @@ const DocReusable = (props) => {
         DOCUMENT_ADMIN_USERNAME
     } = props
 
+    const documentData = useSelector(state => state?.companyDocuments?.documents);
+    console.log("companyDocs", documentData);
+
+    const dispatch =  useDispatch();
+
     console.log(props, "this is dynamic porps")
-    const [imagesData, setImagesData] = useState([]);
-    const [totalDocuments, setTotalDocuments] = useState(0);
+   
+    // const [totalDocuments, setTotalDocuments] = useState(0);
     const [backdrop, setBackdrop] = useState(false);
     const [deleteItem, setDeleteItem] = useState("");
     const [openNav, setOpenNav] = useState(false);
     // const { COMPANY_ID, COMPANY_USERNAME, COMPANY_PARENT_ID, COMPANY_PARENT_USERNAME } = useParams();
     const [resStatus, setResStatus] = useState(false); //adding newline
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [open, setOpen] = React.useState(false);
 
     const [formData, setFormData] = useState({
@@ -71,10 +81,11 @@ const DocReusable = (props) => {
         DOCUMENT_EXPIRY_DATE: "",
         DOCUMENT_TYPE: "",
     });
+  
 
-    useEffect(() => {
-        getalldocument();
-    }, [formData, deleteItem]);
+    // useEffect(() => {
+    //     getalldocument();
+    // }, [formData, deleteItem]);
 
     // function to download the file 
     const downloadFile = (base64Data, fileName) => {
@@ -86,8 +97,7 @@ const DocReusable = (props) => {
         document.body.removeChild(link);
     };
 
-    // const apiEndpoint = "/api/create_document";
-    // Function to upload  the documents 
+
 
     const MyScreen = styled(Paper)((props) => ({
         height: "calc(100vh - 32px)",
@@ -103,36 +113,8 @@ const DocReusable = (props) => {
         handleOpen();
     };
     const handleOpen = () => setOpen(true);
-    // const handleClose = () => setOpen(false);
 
 
-    const getalldocument = async () => {
-
-        const requestData = {
-            DOCUMENT_REF_ID: DOCUMENT_REF_ID,
-            DOCUMENT_ADMIN_USERNAME: DOCUMENT_ADMIN_USERNAME,
-            DOCUMENT_PARENT_USERNAME: DOCUMENT_PARENT_USERNAME,
-        };
-        try {
-            const response = await axios.put(getDocEndPoint, requestData);
-
-            if (!response.data) {
-                throw new Error("Response data is empty");
-            }
-
-            const data = response.data;
-            // console.log("requestdata", data);
-            setIsLoading(true);
-            setResStatus(true);
-            setImagesData(data);
-            setIsLoading(false);
-            setTotalDocuments(data.result?.length || 0);
-            console.log("data documents", data.result);
-        } catch (error) {
-            setIsLoading(false);
-            console.log("Error Fetching Data :", error);
-        }
-    };
 
     // Function to download the uploaded documents 
     const handleDownload = async (documentId, fileName) => {
@@ -160,16 +142,70 @@ const DocReusable = (props) => {
 
     };
 
+    // const handleDelDoc = async (e, documentId) => {
+    //     // setBackdrop(true);
+    //     setResStatus(true);
+    //     // console.log(documentId);
+
+    //     const data = {
+    //         DOCUMENT_ID: documentId,
+    //         DOCUMENT_ADMIN_USERNAME: DOCUMENT_ADMIN_USERNAME,
+    //     };
+    //     // console.log("Data found 1:", data);
+
+    //     try {
+    //         const response = await fetch(`${deleteApiEndpoint}/${documentId}`, {
+    //             method: 'DELETE',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify(data),
+    //         });
+
+    //         if (response.ok) {
+    //             const jsonResponse = await response.json();
+    //             // console.log("Response data found:", jsonResponse);
+    //             setDeleteItem(jsonResponse);
+    //             // setBackdrop(false);
+    //             setResStatus(false);
+
+    //             toast.success("Document Deleted successfully!", {
+    //                 position: toast.POSITION.TOP_CENTER,
+    //                 autoClose: 1000,
+    //             });
+
+    //             // delete documents from redux 
+    //             dispatch(setDocument(jsonResponse))
+              
+    //         } else {
+    //             // Handle the response for non-2xx status codes
+    //             console.error(response.status, response.statusText);
+    //             toast.error('Document not found!', {
+    //                 // Show for 2 seconds
+    //             });
+    //         }
+    //     } catch (error) {
+    //         console.error(error);
+    //         toast.error('An error occurred while deleting the document.', {
+    //             // Show for 2 seconds
+    //         });
+    //     }
+    // };
+
+
+    // function for converting the files into kb and mb 
+    
+    
     const handleDelDoc = async (e, documentId) => {
         // setBackdrop(true);
         setResStatus(true);
-        // console.log(documentId);
+        console.log(documentId);
 
         const data = {
             DOCUMENT_ID: documentId,
             DOCUMENT_ADMIN_USERNAME: DOCUMENT_ADMIN_USERNAME,
         };
-        // console.log("Data found 1:", data);
+        console.log("Data found 1:", data);
 
         try {
             const response = await fetch(`${deleteApiEndpoint}/${documentId}`, {
@@ -182,7 +218,7 @@ const DocReusable = (props) => {
 
             if (response.ok) {
                 const jsonResponse = await response.json();
-                // console.log("Response data found:", jsonResponse);
+                console.log("Response data found:", jsonResponse);
                 setDeleteItem(jsonResponse);
                 // setBackdrop(false);
                 setResStatus(false);
@@ -203,11 +239,9 @@ const DocReusable = (props) => {
             toast.error('An error occurred while deleting the document.', {
                 // Show for 2 seconds
             });
-        }
-    };
-
-
-    // function for converting the files into kb and mb 
+}
+};
+    
     const formatSize = (bytes) => {
         if (bytes >= 1048576) {
             return (bytes / 1048576).toFixed(2) + ' MB';
@@ -363,7 +397,7 @@ const DocReusable = (props) => {
 
 
     // after new
-    const rows = imagesData?.result?.map((item, index) => ({
+    const rows = documentData?.map((item, index) => ({
         id: item.DOCUMENT_ID,
         sr: index + 1,
         documentName: {
@@ -444,6 +478,7 @@ const DocReusable = (props) => {
                     DOCUMENT_EXPIRY_DATE: "",
                     DOCUMENT_TYPE: "",
                 });
+                dispatch(setDocument(response.data.result));
             } else {
                 toast.error("Failed to upload document.");
             }
@@ -476,14 +511,6 @@ const DocReusable = (props) => {
 
     return (
         <>
-            {/* <CreateDoc
-                COMPANY_ID={COMPANY_ID}
-                COMPANY_PARENT_USERNAME={COMPANY_PARENT_USERNAME}
-                COMPANY_USERNAME={COMPANY_USERNAME}
-                update={getalldocument}
-                apiEndpoint={apiEndpoint}
-            /> */}
-
             <Button
                 onClick={handleOpen}
                 sx={{ color: "#277099" }}
@@ -630,7 +657,7 @@ const DocReusable = (props) => {
                                     transform: "translate(-50%,-50%)",
                                 }}
                             >
-                                <small className="text-dark"><p>Check your connection and try again. :(</p><center><button onClick={getalldocument} className="btn btn-sm btn-secondary">Retry</button></center></small>
+                                <small className="text-dark"><p>Check your connection and try again. :(</p><center><button onClick={getAllDocuments} className="btn btn-sm btn-secondary">Retry</button></center></small>
                             </div> : <div
                                 style={{
                                     position: "absolute",

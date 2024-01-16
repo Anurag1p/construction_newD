@@ -122,7 +122,7 @@ const card = (
         <Card sx={{ m: 0.5 }}>
           <CardContent>
             <Typography variant="h5" sx={{ mb: 0 }} color="primary">
-              {post.contractname}
+              {post?.contractname}
             </Typography>
             <Typography
               sx={{ fontSize: 14 }}

@@ -68,8 +68,8 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 
 export default function Dashboard() {
 
-  const companyData = useSelector(state => state.setOneCompany.user)
-  const projectAllData = useSelector(prev => prev.allProject.user)
+  const companyData = useSelector(state => state?.setOneCompany?.user)
+  const projectAllData = useSelector(prev => prev?.allProject?.user)
   const COMPANY_ID = companyData?.[0];
   const COMPANY_USERNAME = companyData?.[1];
   const COMPANY_PARENT_ID = companyData?.[2];

@@ -14,13 +14,25 @@ import {
 import Navbar from "../../components/Navbar";
 
 import DocReusable from "../../components/DocReusable";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function Document(props) {
 
     const [backdrop, setBackdrop] = useState(false);
     const [openNav, setOpenNav] = useState(false);
-    const { COMPANY_ID, COMPANY_USERNAME, COMPANY_PARENT_ID, COMPANY_PARENT_USERNAME } = useParams();
-    console.log("myprops : =>", props)
+
+    const companyData = useSelector((prev) => prev?.companyLogin?.user);
+    const COMPANY_ID = companyData[0];
+    const COMPANY_USERNAME = companyData[1];
+    const COMPANY_PARENT_ID = companyData[2];
+    const COMPANY_PARENT_USERNAME = companyData[3];
+
+    const dispatch = useDispatch();
+
+    // const { COMPANY_ID, COMPANY_USERNAME, COMPANY_PARENT_ID, COMPANY_PARENT_USERNAME } = useParams();
+    console.log("myprops : =>", companyData)
+    const companyDoc = useSelector(state => state?.companyDocuments?.documents)
+    console.log(companyDoc, "documents data")
 
     return (
         <>

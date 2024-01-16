@@ -3,6 +3,7 @@ import axios from "axios";
 
 const ProjectAssigned = (props) => {
 
+  console.log(props, "vivek")
   const filterData = props.projectData;
   const [project, setProject] = useState();
 

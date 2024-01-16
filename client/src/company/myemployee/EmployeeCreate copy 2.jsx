@@ -3,20 +3,17 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-import { Link, useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import { Button, Container } from "@mui/material";
-import env from "react-dotenv";
-import country from "../Api/countriess.json";
-import employeeRole from "../jsonlist/employeeRole.json"
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
+import {toast } from "react-toastify";
+import {Container } from "@mui/material";
+import country from "../../jsonlist/countriess.json";
+import employeeRole from "../../jsonlist/employeeRole.json"
 import {
   validatePhoneNumber,
-  validateUsername,
   validateEmail,
-  validatePassword
-} from "../components/Validation";
-import { auth } from "../firebase";
+} from "../../components/Validation";
+import { fetchEmployees, setEmployee } from "../../redux/slices/getEmployee";
+import { useDispatch, useSelector } from "react-redux";
 
 const style = {
   position: "absolute",
@@ -31,37 +28,26 @@ const style = {
 };
 
 
-export default function AddEmployee({ COMPANY_ID, COMPANY_USERNAME, COMPANY_PARENT_ID, COMPANY_PARENT_USERNAME, refetch }) {
-  const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false);
+export default function AddEmployee() {
+const dispatch = useDispatch();
+const companyData = useSelector(prev => prev?.companyLogin?.user)
+const COMPANY_ID = companyData?.[0];
+const COMPANY_USERNAME = companyData?.[1];
+const COMPANY_PARENT_ID = companyData?.[2];
+const COMPANY_PARENT_USERNAME = companyData?.[3];
+
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const [createEmployee, setCreateEmployee] = useState({
-    EMPLOYEE_NAME: "",
-    EMPLOYEE_COUNTRY: "",
-    EMPLOYEE_STATE: "",
-    EMPLOYEE_CITY: "",
-    EMPLOYEE_PHONE: "",
-    EMPLOYEE_HOURLY_WAGE: "",
-    EMPLOYEE_ROLE: "",
-    EMPLOYEE_EMPLMNTTYPE: "",
-    EMPLOYEE_DOB: "",
-    EMPLOYEE_HIRE_DATE: "",
-    EMPLOYEE_ADD: "",
-    EMPLOYEE_USERNAME: "",
-    EMPLOYEE_PASSWORD: "",
-    EMPLOYEE_MEMBER_PARENT_USERNAME: "",
-    EMPLOYEE_PARENT_ID: "",
-    EMPLOYEE_PARENT_USERNAME: "",
-    EMPLOYEE_MEMBER_PARENT_ID: "",
-  });
+  const [createEmployee, setCreateEmployee] = useState({});
 
   const [errorMsg, setErrorMsg] = useState("");
   const [phoneError, setPhoneError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [nameError, setNameError] = useState("");
+
 
 
 
@@ -113,7 +99,7 @@ export default function AddEmployee({ COMPANY_ID, COMPANY_USERNAME, COMPANY_PARE
     // const isValidUsername = validateUsername(createEmployee.EMPLOYEE_USERNAME);
     const isValidEmail = validateEmail(createEmployee.EMPLOYEE_USERNAME);
     // const isValidPassword = validatePassword(createEmployee.EMPLOYEE_PASSWORD);
-    const isValidName = createEmployee.EMPLOYEE_NAME != "";
+    const isValidName = createEmployee.EMPLOYEE_NAME !== "";
 
     if (!isValidEmail) {
       setEmailError("Invalid email address");
@@ -151,7 +137,7 @@ export default function AddEmployee({ COMPANY_ID, COMPANY_USERNAME, COMPANY_PARE
 
 
           setCreateEmployee({})
-          refetch()
+         dispatch(setEmployee(response.data.result))
           setOpen(false);
 
         }
@@ -424,6 +410,6 @@ export default function AddEmployee({ COMPANY_ID, COMPANY_USERNAME, COMPANY_PARE
           </Box>
         </Container>
       </Modal>
-    </>
-  );
+    </>
+  );
 }

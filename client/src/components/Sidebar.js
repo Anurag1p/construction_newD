@@ -29,7 +29,9 @@ const Sidebar = ({
   toggle,
 }) => {
 
-  const companyData = useSelector(state => state.setOneCompany.user)
+  const companyData = useSelector(state => state?.setOneCompany?.user)
+
+
   
   console.log(COMPANY_ID, "control");
   const navigate = useNavigate()
@@ -50,6 +52,7 @@ const Sidebar = ({
 
   const drawerWidth = 0;
   const filterData = companyData?.[0]
+  console.log("sidebar", companyData)
 
   // console.log(filterData, "wh")
 
@@ -103,7 +106,7 @@ const Sidebar = ({
             <Link
               to={`/company/projects`}
               className="nav-link"
-              style={{ background: active == 1 ? "#f3f3f3" : "" }}
+              style={{ background: active === 1 ? "#f3f3f3" : "" }}
             >
               <ListItem disablePadding>
                 <ListItemButton sx={{ fontSize: "16px" }}>
@@ -114,7 +117,7 @@ const Sidebar = ({
             <Link
               to={`/company/employees`}
               className="nav-link"
-              style={{ background: active == 2 ? "#f3f3f3" : "" }}
+              style={{ background: active === 2 ? "#f3f3f3" : "" }}
             >
               <ListItem disablePadding>
                 <ListItemButton sx={{ fontSize: "16px" }}>
@@ -125,7 +128,7 @@ const Sidebar = ({
             <Link
               to={`/company/attendance`}
               className="nav-link"
-              style={{ background: active == 3 ? "#f3f3f3" : "" }}
+              style={{ background: active === 3 ? "#f3f3f3" : "" }}
             >
               <ListItem disablePadding>
                 <ListItemButton sx={{ fontSize: "16px" }}>
@@ -136,7 +139,7 @@ const Sidebar = ({
             <Link
               to={`/company/documents`}
               className="nav-link"
-              style={{ background: active == 4 ? "#f3f3f3" : "" }}
+              style={{ background: active === 4 ? "#f3f3f3" : "" }}
             >
               <ListItem disablePadding>
                 <ListItemButton sx={{ fontSize: "16px" }}>
@@ -147,7 +150,7 @@ const Sidebar = ({
             <Link
               to={`/company/subcontractors`}
               className="nav-link"
-              style={{ background: active == 5 ? "#f3f3f3" : "" }}
+              style={{ background: active === 5 ? "#f3f3f3" : "" }}
             >
               <ListItem disablePadding>
                 <ListItemButton sx={{ fontSize: "16px" }}>

@@ -1,78 +1,60 @@
-import React from "react";
-import { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-import { Link, useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import { Button, Container } from "@mui/material";
-import env from "react-dotenv";
-import country from "../Api/countriess.json";
-import employeeRole from "../jsonlist/employeeRole.json"
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import {
-  validatePhoneNumber,
-  validateUsername,
-  validateEmail,
-  validatePassword
-} from "../components/Validation";
-import { auth } from "../firebase";
+import axios from "axios";
+import country from "../../jsonlist/countriess.json";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import employeeRole from "../../jsonlist/employeeRole.json";
+import { Button } from "@mui/material";
+import { useSelector } from "react-redux";
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: "60%",
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 4,
-  borderRadius: 4,
-};
+const AddEmployee = () => {
+  const companyData = useSelector((prev) => prev.companyLogin.user);
 
+  const COMPANY_ID = companyData[0];
+  const COMPANY_USERNAME = companyData[1];
+  const COMPANY_PARENT_ID = companyData[2];
+  const COMPANY_PARENT_USERNAME = companyData[3];
 
-export default function AddEmployee({ COMPANY_ID, COMPANY_USERNAME, COMPANY_PARENT_ID, COMPANY_PARENT_USERNAME, refetch }) {
-  const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false);
-  const navigate = useNavigate();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  const [errorMsg, setErrorMsg] = useState("");
+
   const [createEmployee, setCreateEmployee] = useState({
-    EMPLOYEE_NAME: "",
-    EMPLOYEE_COUNTRY: "",
-    EMPLOYEE_STATE: "",
-    EMPLOYEE_CITY: "",
-    EMPLOYEE_PHONE: "",
-    EMPLOYEE_HOURLY_WAGE: "",
-    EMPLOYEE_ROLE: "",
-    EMPLOYEE_EMPLMNTTYPE: "",
-    EMPLOYEE_DOB: "",
-    EMPLOYEE_HIRE_DATE: "",
-    EMPLOYEE_ADD: "",
-    EMPLOYEE_USERNAME: "",
-    EMPLOYEE_PASSWORD: "",
+    EMPLOYEE_MEMBER_PARENT_ID: "",
     EMPLOYEE_MEMBER_PARENT_USERNAME: "",
     EMPLOYEE_PARENT_ID: "",
     EMPLOYEE_PARENT_USERNAME: "",
-    EMPLOYEE_MEMBER_PARENT_ID: "",
+    EMPLOYEE_USERNAME: "",
+    EMPLOYEE_NAME: "",
+    EMPLOYEE_PHONE: "",
+    EMPLOYEE_DOB: "",
+    EMPLOYEE_COUNTRY: "",
+    EMPLOYEE_STATE: "",
+    EMPLOYEE_ADD: "",
+    EMPLOYEE_CITY: "",
+    EMPLOYEE_HOURLY_WAGE: "",
+    EMPLOYEE_ROLE: "",
+    EMPLOYEE_EMPLMNTTYPE: "",
+    EMPLOYEE_HIRE_DATE: "",
   });
 
-  const [errorMsg, setErrorMsg] = useState("");
   const [phoneError, setPhoneError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [nameError, setNameError] = useState("");
 
-
-
-
   useEffect(() => {
-    setCreateEmployee((prevState) => ({ ...prevState, EMPLOYEE_MEMBER_PARENT_USERNAME: COMPANY_PARENT_USERNAME }));
-    setCreateEmployee((prevState) => ({ ...prevState, EMPLOYEE_PARENT_ID: COMPANY_ID }));
-    setCreateEmployee((prevState) => ({ ...prevState, EMPLOYEE_PARENT_USERNAME: COMPANY_USERNAME }));
-    setCreateEmployee((prevState) => ({ ...prevState, EMPLOYEE_MEMBER_PARENT_ID: COMPANY_PARENT_ID }));
-  }, [open])
-
+    setCreateEmployee((prevState) => ({
+      ...prevState,
+      EMPLOYEE_MEMBER_PARENT_USERNAME: COMPANY_PARENT_USERNAME,
+      EMPLOYEE_MEMBER_PARENT_ID: COMPANY_ID,
+      EMPLOYEE_PARENT_USERNAME: COMPANY_USERNAME,
+      EMPLOYEE_PARENT_ID: COMPANY_PARENT_ID,
+    }));
+  }, [open]);
 
   const availableState = country?.find(
     (c) => c.name === createEmployee.EMPLOYEE_COUNTRY
@@ -82,15 +64,6 @@ export default function AddEmployee({ COMPANY_ID, COMPANY_USERNAME, COMPANY_PARE
     (s) => s.name === createEmployee.EMPLOYEE_STATE
   );
 
-
-
-
-
-
-  // const handleCreate = (e) => {
-  //   setCreateEmployee({ ...createEmployee, [e.target.name]: e.target.value });
-  // };
-
   const handleCreate = (e) => {
     const { name, value } = e.target;
     setCreateEmployee((prevState) => ({
@@ -99,77 +72,70 @@ export default function AddEmployee({ COMPANY_ID, COMPANY_USERNAME, COMPANY_PARE
     }));
   };
 
-
   const handleSubmit = (e) => {
     e.preventDefault();
 
     // Clear previous validation errors
     setPhoneError("");
     setEmailError("");
-    setNameError("")
+    setNameError("");
 
     // Validate phone number, username, and email fields
-    const isValidPhoneNumber = validatePhoneNumber(createEmployee.EMPLOYEE_PHONE);
-    // const isValidUsername = validateUsername(createEmployee.EMPLOYEE_USERNAME);
+    const isValidPhoneNumber = validatePhoneNumber(
+      createEmployee.EMPLOYEE_PHONE
+    );
     const isValidEmail = validateEmail(createEmployee.EMPLOYEE_USERNAME);
-    // const isValidPassword = validatePassword(createEmployee.EMPLOYEE_PASSWORD);
-    const isValidName = createEmployee.EMPLOYEE_NAME != "";
+    const isValidName = createEmployee.EMPLOYEE_NAME !== "";
 
     if (!isValidEmail) {
       setEmailError("Invalid email address");
       return;
     }
 
-
-
     if (!isValidName) {
       setNameError("Name should not be empty");
       return;
     }
-
 
     if (!isValidPhoneNumber) {
       setPhoneError("Invalid phone number");
       return;
     }
 
-
-
     // Perform API validation and request
     axios
       .post("/api/create_employee", createEmployee)
       .then((response) => {
         if (response.data.operation === "failed") {
-          setEmailError(response.data.errorMsg)
+          setEmailError(response.data.errorMsg);
+          toast.error(response.data.errorMsg, {
+            position: toast.POSITION.TOP_CENTER,
+            autoClose: 1000,
+          });
         } else if (response.data.operation === "successfull") {
           toast.success("Employee Created successfully!", {
             position: toast.POSITION.TOP_CENTER,
             autoClose: 1000,
-
           });
-          // handleSubmission()
-
-
-          setCreateEmployee({})
-          refetch()
           setOpen(false);
-
+          setCreateEmployee({});
         }
       })
       .catch((error) => {
         console.error(error, "ERR");
+        toast.error("An error occurred. Please try again later.", {
+          position: toast.POSITION.TOP_CENTER,
+          autoClose: 1000,
+        });
       });
   };
 
-
   return (
-    < >
-      
+    <>
       <button
         onClick={handleOpen}
         sx={{ color: "#277099" }}
         className="btn btn-sm btn-primary rounded-0 border-0  rounded-0 text-light"
-     
         size="small"
       >
         + Add New Employee
@@ -180,14 +146,9 @@ export default function AddEmployee({ COMPANY_ID, COMPANY_USERNAME, COMPANY_PARE
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
-        style={{zIndex:9999999}}
+        style={{ zIndex: 9999999 }}
       >
-        <Container
-          id="content"
-          style={{ height: "100vh", position: "relative" }}
-          maxWidth="xl"
-        >
-          <Box className="modal-content">
+        <Box className="modal-content">
             <form onSubmit={handleSubmit} className="overflow-auto overflow-x-hidden">
               <h5>Create Employee</h5>
               <div className="row py-1">
@@ -258,7 +219,7 @@ export default function AddEmployee({ COMPANY_ID, COMPANY_USERNAME, COMPANY_PARE
                   />
                 </div>
 
-    
+
                 <div className="form-group col-xl-6 py-1">
 
                   <label>Country</label>
@@ -272,7 +233,7 @@ export default function AddEmployee({ COMPANY_ID, COMPANY_USERNAME, COMPANY_PARE
                   >
                     <option value="">--Choose Country--</option>
                     {country?.map((value, key) => {
-                   
+
                       return (
                         <option value={value.name} key={key}>
                           {value.name}
@@ -332,7 +293,7 @@ export default function AddEmployee({ COMPANY_ID, COMPANY_USERNAME, COMPANY_PARE
                       return (
                         <option value={e.name} key={key}>
 
-                          
+
                           {e.name}
                         </option>
                       );
@@ -422,8 +383,22 @@ export default function AddEmployee({ COMPANY_ID, COMPANY_USERNAME, COMPANY_PARE
 
             </form>
           </Box>
-        </Container>
       </Modal>
     </>
   );
-}
+};
+
+// Function to validate phone number
+const validatePhoneNumber = (phoneNumber) => {
+  const phoneRegex = /^[0-9]{10}$/;
+  return phoneRegex.test(phoneNumber);
+};
+
+// Function to validate email address
+const validateEmail = (email) => {
+  const emailRegex =
+    /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+  return emailRegex.test(email);
+};
+
+export default AddEmployee;

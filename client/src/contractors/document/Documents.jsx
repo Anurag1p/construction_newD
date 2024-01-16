@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import { Button ,Skeleton} from "@mui/material";
+import { Button } from "@mui/material";
 import "../../assests/css/document.css";
-import { DataGrid } from '@mui/x-data-grid';
+
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import DocumentCreate from "./DocumentCreate";
-import { useParams } from "react-router-dom";
+
 import Sidebar from "../../components/Sidebar";
 import {Paper} from "@mui/material";
 import Navbar from "../../components/Navbar";
@@ -21,6 +19,7 @@ import InsertChartIcon from '@mui/icons-material/InsertChart';
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import { RotatingLines } from "react-loader-spinner";
+import DocReusable from "../../components/DocReusable";
 
 export default function Document({
     COMPANY_ID,
@@ -369,63 +368,16 @@ export default function Document({
 
                 <Navbar toggle={() => setOpenNav((e) => !e)} />
 
-                <DocumentCreate
-                    name={"Employee"}
-                    COMPANY_ID={COMPANY_ID}
-                    COMPANY_USERNAME={COMPANY_USERNAME}
-                    COMPANY_PARENT_USERNAME={COMPANY_PARENT_USERNAME}
-                    update={getalldocument}
-
-                />
-
-                <div className="myscreen p-3">
-                    <Box style={{ height: "100%", padding: 0, paddingBottom: "0" }}>
-                    {resStatus === true ?  <DataGrid
-                                rows={rows}
-                                columns={columns}
-                                sx={{ border: "none", height: '80vh' }}
-                                initialState={{
-                                    pagination: {
-                                        paginationModel: {
-                                            pageSize: 20,
-                                        },
-                                    },
-                                }}
-                                pageSizeOptions={[10]}
-                                disableMultipleSelection
-                                density="compact"
-
-                                getRowId={(row) => row.id}
-                            />
-                           
-                            : resStatus === "error" ? <div
-                                style={{
-                                    position: "absolute",
-                                    top: "50%",
-                                    left: "50%",
-                                    transform: "translate(-50%,-50%)",
-                                }}
-                            >
-                                <small className="text-dark"><p>Check your connection and try again. :(</p><center><button onClick={getalldocument} className="btn btn-sm btn-secondary">Retry</button></center></small>
-                            </div> : <div
-                                style={{
-                                    position: "absolute",
-                                    top: "50%",
-                                    left: "50%",
-                                    transform: "translate(-50%,-50%)",
-                                }}
-                            >
-                                <RotatingLines
-                                    strokeColor="#2D5169"
-                                    strokeWidth="5"
-                                    animationDuration="0.75"
-                                    width="50"
-                                    visible={true}
-                                />
-                            </div>  }
-                        
-                    </Box>
-                </div>
+                <DocReusable
+            createEndpoint="/api/create_document"
+            getDocEndPoint="/api/get_all_document"
+            documentType="Employee Document"
+            deleteApiEndpoint="/api/delete_document"
+            downloadApiEndpoint="/api/download_document"
+            // DOCUMENT_REF_ID={filterData?.EMPLOYEE_ID}
+            // DOCUMENT_PARENT_USERNAME={filterData?.EMPLOYEE_USERNAME}
+            // DOCUMENT_ADMIN_USERNAME={filterData?.EMPLOYEE_MEMBER_PARENT_USERNAME}
+          />
             </Box>
 
         </>

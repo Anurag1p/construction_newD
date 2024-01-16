@@ -6,7 +6,7 @@ import { auth } from "../firebase";
 import styles from "../assests/css/Login.module.css";
 import { Alert, Stack } from "@mui/material";
 import { useDispatch } from "react-redux";
-import {setCompanyuser} from "../redux/slices/CompanyLoginSlice"
+import {setCompanyuser} from "../redux/slice/CompanyLoginSlice"
 
 function Logincomp({ message }) {
   //redux 

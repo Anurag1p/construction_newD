@@ -11,6 +11,8 @@ import moment from "moment";
 import { RotatingLines } from "react-loader-spinner";
 import CreateContractor from "./CreateContractor";
 import EditSubcontract from "./EditSubContract";
+import { useSelector } from "react-redux";
+import { getAllSubcontractor } from "../../redux/slice/SubContractorSlice";
 
 const Contractor = ({
   COMPANY_ID,
@@ -23,7 +25,7 @@ const Contractor = ({
   const [data, setData] = useState({ row: {} });
   const [archived, setArchived] = useState([{}]);
   const [display, setDisplay] = useState("unarchive");
-  const [resStatus, setResStatus] = useState(false);
+  const [resStatus, setResStatus] = useState(true);
   const navigate = useNavigate();
 
 
@@ -32,100 +34,103 @@ const Contractor = ({
     authorization_key: "qzOUsBmZFgMDlwGtrgYypxUz",
   };
 
+  const subcontractorData =  useSelector(state => state?.allsubcontractor?.subcontractor) 
+  console.log(subcontractorData, "heelo ")
+
   //fatch Employees
-  const fetchData = async () => {
-    try {
-      const response = await axios.put("/api/get_subcontractor", {
-        SUBCONTRACTOR_MEMBER_PARENT_ID: COMPANY_PARENT_ID,
-        SUBCONTRACTOR_MEMBER_PARENT_USERNAME: COMPANY_PARENT_USERNAME,
-        SUBCONTRACTOR_PARENT_USERNAME: COMPANY_USERNAME,
-        SUBCONTRACTOR_PARENT_ID: COMPANY_ID,
-      },{headers});
+  // const fetchData = async () => {
+  //   try {
+  //     const response = await axios.put("/api/get_subcontractor", {
+  //       SUBCONTRACTOR_MEMBER_PARENT_ID: COMPANY_PARENT_ID,
+  //       SUBCONTRACTOR_MEMBER_PARENT_USERNAME: COMPANY_PARENT_USERNAME,
+  //       SUBCONTRACTOR_PARENT_USERNAME: COMPANY_USERNAME,
+  //       SUBCONTRACTOR_PARENT_ID: COMPANY_ID,
+  //     },{headers});
 
-      const data = response.data;
-      // console.log("Employee Data: =>", data);
-      setResStatus(true)
-      setEmpData(data.result);
-    } catch (err) {
-      console.log("Something Went Wrong: =>", err);
-      setResStatus("error");
-      throw err;
-    }
-  };
+  //     const data = response.data;
+  //     // console.log("Employee Data: =>", data);
+  //     setResStatus(true)
+  //     setEmpData(data.result);
+  //   } catch (err) {
+  //     console.log("Something Went Wrong: =>", err);
+  //     setResStatus("error");
+  //     throw err;
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchData();
-  }, [COMPANY_ID]);
+  // useEffect(() => {
+  //   fetchData();
+  // }, [COMPANY_ID]);
 
   // archive
-  const archiveEmployee = async (archiveData) => {
-    try {
-      const data = {
-        SUBCONTRACTOR_PARENT_ID: archiveData.row?.SUBCONTRACTOR_PARENT_ID,
-        SUBCONTRACTOR_PARENT_USERNAME: archiveData.row?.SUBCONTRACTOR_PARENT_USERNAME,
-        SUBCONTRACTOR_MEMBER_PARENT_ID: archiveData.row?.SUBCONTRACTOR_MEMBER_PARENT_ID,
-        SUBCONTRACTOR_MEMBER_PARENT_USERNAME:
-          archiveData.row?.SUBCONTRACTOR_MEMBER_PARENT_USERNAME,
-        SUBCONTRACTOR_ID: archiveData.row?.SUBCONTRACTOR_ID,
-      };
+  // const archiveEmployee = async (archiveData) => {
+  //   try {
+  //     const data = {
+  //       SUBCONTRACTOR_PARENT_ID: archiveData.row?.SUBCONTRACTOR_PARENT_ID,
+  //       SUBCONTRACTOR_PARENT_USERNAME: archiveData.row?.SUBCONTRACTOR_PARENT_USERNAME,
+  //       SUBCONTRACTOR_MEMBER_PARENT_ID: archiveData.row?.SUBCONTRACTOR_MEMBER_PARENT_ID,
+  //       SUBCONTRACTOR_MEMBER_PARENT_USERNAME:
+  //         archiveData.row?.SUBCONTRACTOR_MEMBER_PARENT_USERNAME,
+  //       SUBCONTRACTOR_ID: archiveData.row?.SUBCONTRACTOR_ID,
+  //     };
 
-      console.log("Data:", data);
+  //     console.log("Data:", data);
 
-      const response = await axios.post("/api/archive-employee", data);
+  //     const response = await axios.post("/api/archive-employee", data);
 
-      if (response.status === 200) {
-        toast.success("Employee Archived!", {
-          position: toast.POSITION.TOP_CENTER,
-          autoClose: 1000,
-        });
-        fetchData();
-      } else {
-        toast.error("Failed to Archived!", {});
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("An error occurred while archiving the employee.", {
-        // Show for 2 seconds
-      });
-    }
-  };
+  //     if (response.status === 200) {
+  //       toast.success("Employee Archived!", {
+  //         position: toast.POSITION.TOP_CENTER,
+  //         autoClose: 1000,
+  //       });
+  //       fetchData();
+  //     } else {
+  //       toast.error("Failed to Archived!", {});
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //     toast.error("An error occurred while archiving the employee.", {
+  //       // Show for 2 seconds
+  //     });
+  //   }
+  // };
 
   // unarchieve
-  const unarchiveEmployee = async (archiveemp) => {
-    try {
-      const data = {
-        SUBCONTRACTOR_PARENT_ID: archiveemp.row?.SUBCONTRACTOR_PARENT_ID,
-        SUBCONTRACTOR_PARENT_USERNAME: archiveemp.row?.SUBCONTRACTOR_PARENT_USERNAME,
-        SUBCONTRACTOR_MEMBER_PARENT_ID: archiveemp.row?.SUBCONTRACTOR_MEMBER_PARENT_ID,
-        SUBCONTRACTOR_MEMBER_PARENT_USERNAME:
-          archiveemp.row?.SUBCONTRACTOR_MEMBER_PARENT_USERNAME,
-        SUBCONTRACTOR_ID: archiveemp.row?.SUBCONTRACTOR_ID,
-      };
+  // const unarchiveEmployee = async (archiveemp) => {
+  //   try {
+  //     const data = {
+  //       SUBCONTRACTOR_PARENT_ID: archiveemp.row?.SUBCONTRACTOR_PARENT_ID,
+  //       SUBCONTRACTOR_PARENT_USERNAME: archiveemp.row?.SUBCONTRACTOR_PARENT_USERNAME,
+  //       SUBCONTRACTOR_MEMBER_PARENT_ID: archiveemp.row?.SUBCONTRACTOR_MEMBER_PARENT_ID,
+  //       SUBCONTRACTOR_MEMBER_PARENT_USERNAME:
+  //         archiveemp.row?.SUBCONTRACTOR_MEMBER_PARENT_USERNAME,
+  //       SUBCONTRACTOR_ID: archiveemp.row?.SUBCONTRACTOR_ID,
+  //     };
 
-      console.log("Data:", data);
+  //     console.log("Data:", data);
 
-      const response = await axios.put("/api/unarchive-employee", data);
+  //     const response = await axios.put("/api/unarchive-employee", data);
 
-      if (response.status === 200) {
-        toast.success("Employee UnArchived!", {
-          position: toast.POSITION.TOP_CENTER,
-          autoClose: 1000,
-        });
-        fetchData();
-      } else {
-        toast.error("Failed to UnArchived!", {
-          // Show for 2 seconds
-        });
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("An error occurred while archiving the employee.", {
-        // Show for 2 seconds
-      });
-    }
-  };
+  //     if (response.status === 200) {
+  //       toast.success("Employee UnArchived!", {
+  //         position: toast.POSITION.TOP_CENTER,
+  //         autoClose: 1000,
+  //       });
+  //       fetchData();
+  //     } else {
+  //       toast.error("Failed to UnArchived!", {
+  //         // Show for 2 seconds
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //     toast.error("An error occurred while archiving the employee.", {
+  //       // Show for 2 seconds
+  //     });
+  //   }
+  // };
 
-  console.log(data, "data");
+  // console.log(data, "data");
 
   const handleClick = (event) => {
     navigate("/company/subcontractors/detail", {
@@ -207,44 +212,44 @@ const columns = [
         //   handleEdit(cellValues);
         // }}
         >
-          <EditSubcontract editsubcontract={cellValues} refetch={fetchData} />
+          <EditSubcontract editsubcontract={cellValues} refetch={getAllSubcontractor} />
         </Button>
       )
     },
   
   },
-  {
-    field: "archive",
-    headerName: "Archive",
-    width: 120,
-    renderCell: (cellValues) => {
-      return (
-        <>
-          {display === "unarchive" ? (
-            <Button
-              variant="contained"
-              color="secondary"
-              sx={{ borderRadius: "12px", padding: "2px 10px" }}
-              size="small"
-              onClick={() => archiveEmployee(cellValues)}
-            >
-              Archive
-            </Button>
-          ) : (
-            <Button
-              variant="contained"
-              color="secondary"
-              sx={{ borderRadius: "12px", padding: "2px 10px" }}
-              size="small"
-              onClick={() => unarchiveEmployee(cellValues)}
-            >
-              UnArchive
-            </Button>
-          )}
-        </>
-      );
-    },
-  }
+  // {
+  //   field: "archive",
+  //   headerName: "Archive",
+  //   width: 120,
+  //   renderCell: (cellValues) => {
+  //     return (
+  //       <>
+  //         {display === "unarchive" ? (
+  //           <Button
+  //             variant="contained"
+  //             color="secondary"
+  //             sx={{ borderRadius: "12px", padding: "2px 10px" }}
+  //             size="small"
+  //             onClick={() => archiveEmployee(cellValues)}
+  //           >
+  //             Archive
+  //           </Button>
+  //         ) : (
+  //           <Button
+  //             variant="contained"
+  //             color="secondary"
+  //             sx={{ borderRadius: "12px", padding: "2px 10px" }}
+  //             size="small"
+  //             onClick={() => unarchiveEmployee(cellValues)}
+  //           >
+  //             UnArchive
+  //           </Button>
+  //         )}
+  //       </>
+  //     );
+  //   },
+  // }
 
 ];
 
@@ -255,7 +260,7 @@ const columns = [
   // const archivedData = empData?.filter((newData) => newData?.ARCHIVED === true);
   // const rows2 = archivedData;
 
-  const rows = empData;
+  const rows = subcontractorData;
 
   return (
     <>
@@ -280,7 +285,8 @@ const columns = [
           My Subcontractors
         </button>
 
-        <button
+{/*******************************  Archive button ******************************* */}
+        {/* <button
           size="small"
           variant={"outlined"}
           className={
@@ -291,14 +297,14 @@ const columns = [
           onClick={() => setDisplay("archive")}
         >
           Archive
-        </button>
+        </button> */}
         <CreateContractor
           COMPANY_ID={COMPANY_ID}
           COMPANY_USERNAME={COMPANY_USERNAME}
           COMPANY_PARENT_ID={COMPANY_PARENT_ID}
           COMPANY_PARENT_USERNAME={COMPANY_PARENT_USERNAME}
           name={"Project"}
-          Update={fetchData}
+          // Update={fetchData}
         /></> ) : <>
         <button
           size="small"
@@ -364,7 +370,7 @@ const columns = [
                       <p>Check your connection and try again. :(</p>
                       <center>
                         <button
-                          onClick={fetchData}
+                          onClick={getAllSubcontractor}
                           className="btn btn-sm btn-secondary"
                         >
                           Retry

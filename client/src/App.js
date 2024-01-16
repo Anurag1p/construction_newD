@@ -44,19 +44,29 @@ import Documents from "./company/document/Documents";
 import Contractor from "./company/mycontractor/Contractor";
 import ContractorDetail from "./company/mycontractor/ContractorDetail";
 import Dashboard from "./contractors/dashboard/Dashboard";
-import { UseSelector, useDispatch, useSelector } from "react-redux";
-import { setCompanyuser } from "./redux/slices/CompanyLoginSlice"
-import { setOneCompany } from "./redux/slices/getOneCompanySlice"
-import { setAllProject } from "./redux/slices/getallProjectSlice"
+import { useDispatch, useSelector } from "react-redux";
+import { setCompanyuser } from "./redux/slice/CompanyLoginSlice"
+// import { setOneCompany } from "./redux/slices/getOneCompanySlice"
 import SubContractorDoc from "./company/mycontractor/SubContractorDoc";
 
+// redux setup anurag 
+import { getProjectData } from "./redux/slice/getallProjectSlice";
+import { getSingleCompData } from "./redux/slice/SingleCompSlice";
+import { getEmployeeData } from "./redux/slice/EmployeeDataSlice";
+import {getAllDocuments} from "./redux/slice/GetCompanyDocSlice";
+import {getAllSubcontractor} from "./redux/slice/SubContractorSlice";
+
 function App() {
+
   const [userName, setUserName] = useState("");
-  const Dispatch = useDispatch()
-  const companyData = useSelector(prev => prev.companyLogin.user)
-  const companyAllData = useSelector(prev => prev.setOneCompany.user)
-  const projectAllData = useSelector(prev => prev.allProject.user)
-  console.log(companyData, "companyLoginData")
+  const dispatch = useDispatch()
+  const companyData = useSelector(prev => prev?.companyLogin?.user)
+  // const companyAllData = useSelector(prev => prev?.setOneCompany?.user)
+  // const projectAllData = useSelector(prev => prev?.allProject?.user);
+
+  const singleCompany = useSelector(state => state?.singleCompData?.singleComp);
+
+ 
 
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
@@ -65,7 +75,7 @@ function App() {
         const splitedData = data?.split("&&");
         console.log(user, "user");
         setUserName(splitedData);
-        Dispatch(setCompanyuser(splitedData))
+        dispatch(setCompanyuser(splitedData))
         console.log(splitedData, "splitedData");
       } else setUserName("");
     });
@@ -77,68 +87,64 @@ function App() {
   const COMPANY_USERNAME = companyData?.[1];
   const COMPANY_PARENT_ID = companyData?.[2];
   const COMPANY_PARENT_USERNAME = companyData?.[3];
-  console.log(COMPANY_ID, "uni");
 
-  const headers = {
-    "Content-Type": "application/json"
-  };
+
+  // const headers = {
+  //   "Content-Type": "application/json"
+  // };
 
   // get company
-  const getCompany = async () => {
-    try {
-      const response = await axios.put(
-        "/api/get_company",
-        {
-          COMPANY_PARENT_ID: COMPANY_PARENT_ID,
-          COMPANY_PARENT_USERNAME: COMPANY_PARENT_USERNAME,
-          COMPANY_ID: COMPANY_ID,
-          COMPANY_USERNAME: COMPANY_USERNAME
-        },
-        {
-          headers
-        }
-      );
-      //remove
-      const data = response.data;
-      Dispatch(setOneCompany(data.result));
-
-      // }, 1000);
-    } catch (error) {
-      console.log("Error fetching data:", error);
-
-    }
-  };
-
-  const fetchProjects = async (e) => {
-    try {
-      const response = await axios.put("/api/get_projects", {
-        PROJECT_PARENT_ID: COMPANY_ID,
-        PROJECT_PARENT_USERNAME: COMPANY_USERNAME,
-        PROJECT_MEMBER_PARENT_ID: COMPANY_PARENT_ID,
-        PROJECT_MEMBER_PARENT_USERNAME: COMPANY_PARENT_USERNAME,
-      });
-      const data = response.data;
-      // setResStatus(true);
-      // setProjectData(data?.result);
-      // 
-      Dispatch(setAllProject(data?.result))
-    } catch (err) {
-      console.log("Something Went Wrong: =>", err);
-      // setResStatus("error");
-    }
-  };
-
 
   useEffect(() => {
-    getCompany();
-  }, [companyData]);
+    dispatch(getProjectData({
+      PROJECT_PARENT_ID: COMPANY_ID,
+      PROJECT_PARENT_USERNAME: COMPANY_USERNAME,
+      PROJECT_MEMBER_PARENT_ID: COMPANY_PARENT_ID,
+      PROJECT_MEMBER_PARENT_USERNAME: COMPANY_PARENT_USERNAME,
+    }))
+  }, [dispatch, COMPANY_ID, COMPANY_USERNAME, COMPANY_PARENT_ID, COMPANY_PARENT_USERNAME])
+
+  // gettingsingle company data from store
 
   useEffect(() => {
-    fetchProjects();
-  }, [companyAllData]);
+
+    dispatch(getSingleCompData({
+      COMPANY_ID: COMPANY_ID,
+      COMPANY_USERNAME: COMPANY_USERNAME,
+      COMPANY_PARENT_ID: COMPANY_PARENT_ID,
+      COMPANY_PARENT_USERNAME: COMPANY_PARENT_USERNAME
+    }))
+  }, [dispatch, COMPANY_ID, COMPANY_USERNAME, COMPANY_PARENT_ID, COMPANY_PARENT_USERNAME])
+
+  // getting the Employee Data from store 
+  useEffect(() => {
+    dispatch(getEmployeeData({
+      EMPLOYEE_PARENT_ID: COMPANY_ID,
+      EMPLOYEE_PARENT_USERNAME: COMPANY_USERNAME,
+      EMPLOYEE_MEMBER_PARENT_ID: COMPANY_PARENT_ID,
+      EMPLOYEE_MEMBER_PARENT_USERNAME: COMPANY_PARENT_USERNAME
+    }))
+  }, [dispatch, COMPANY_ID, COMPANY_USERNAME, COMPANY_PARENT_USERNAME, COMPANY_PARENT_ID])
+
+//getting the documents data from store
+  useEffect(() => {
+    dispatch(getAllDocuments({
+      DOCUMENT_REF_ID: COMPANY_ID,
+      DOCUMENT_PARENT_USERNAME: COMPANY_USERNAME,
+      DOCUMENT_ADMIN_USERNAME: COMPANY_PARENT_USERNAME
+    }))
+  }, [dispatch, COMPANY_ID, COMPANY_USERNAME, COMPANY_PARENT_USERNAME])
 
 
-
+  useEffect( () => {
+    dispatch( getAllSubcontractor({
+        SUBCONTRACTOR_PARENT_ID: COMPANY_ID,
+        SUBCONTRACTOR_PARENT_USERNAME:COMPANY_USERNAME,
+        SUBCONTRACTOR_MEMBER_PARENT_ID: COMPANY_PARENT_ID,
+        SUBCONTRACTOR_MEMBER_PARENT_USERNAME:COMPANY_PARENT_USERNAME
+    }))
+  }, [dispatch, COMPANY_ID, COMPANY_USERNAME, COMPANY_PARENT_USERNAME, COMPANY_PARENT_ID])
+ 
   return (
     <div
       className="wrapper"
@@ -159,10 +165,10 @@ function App() {
               path="/company/dashboard"
               element={<CompanyDashboard data={userName} />}
             /> */}
-            <Route
+            {/* <Route
               path="/employee/:COMPANY_ID/:COMPANY_USERNAME/:COMPANY_PARENT_ID/:COMPANY_PARENT_USERNAME"
               element={<EmployeeDetail state={userName} />}
-            />
+            /> */}
             <Route
               path="/employee/attendance"
               element={<EmployeeAttendance state={userName} />}

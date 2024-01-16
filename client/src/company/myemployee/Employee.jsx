@@ -4,50 +4,43 @@ import { Box, Button } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import EmployeeEdit from "../myemployee/EmployeeEdit";
-import EmployeeCreate from "../myemployee/EmployeeCreate";
+import EmployeeEdit from "./EmployeeEdit";
+import EmployeeCreate from "./EmployeeCreate";
 import Sidebar from "../../components/Sidebar";
 import moment from "moment";
 import { RotatingLines } from "react-loader-spinner";
+import { useDispatch, useSelector } from "react-redux";
 
-const Employee = ({
-  COMPANY_ID,
-  COMPANY_USERNAME,
-  COMPANY_PARENT_ID,
-  COMPANY_PARENT_USERNAME,
-}) => {
-  const [open, setOpen] = useState(false);
-  const [empData, setEmpData] = useState([{}]);
-  const [data, setData] = useState({ row: {} });
+// import for refetch the data to update 
+import { getEmployeeData,setEmployeeData } from "../../redux/slice/EmployeeDataSlice";
+
+const Employee = () => {
+
   const [archived, setArchived] = useState([{}]);
   const [display, setDisplay] = useState("unarchive");
-  const [resStatus, setResStatus] = useState(false);
+  const [resStatus, setResStatus] = useState(true);
   const navigate = useNavigate();
 
-  //fatch Employees
-  const fetchData = async () => {
-    try {
-      const response = await axios.put("/api/get_employee", {
-        EMPLOYEE_MEMBER_PARENT_ID: COMPANY_PARENT_ID,
-        EMPLOYEE_MEMBER_PARENT_USERNAME: COMPANY_PARENT_USERNAME,
-        EMPLOYEE_PARENT_USERNAME: COMPANY_USERNAME,
-        EMPLOYEE_PARENT_ID: COMPANY_ID,
-      });
+  // calling dispatch for caaling the fetchempData funciton 
+  const dispatch = useDispatch();
 
-      const data = response.data;
-      // console.log("Employee Data: =>", data);
-      setResStatus(true)
-      setEmpData(data.result);
-    } catch (err) {
-      console.log("Something Went Wrong: =>", err);
-      setResStatus("error");
-      throw err;
-    }
-  };
+  // data formSinlge company 
+  const companyLoginData = useSelector((state) => state?.companyLogin?.user);
 
-  useEffect(() => {
-    fetchData();
-  }, [COMPANY_ID]);
+  // const empdata = useSelector((state) => state?.allEmployee?.employees);
+  const empdata = useSelector((state) => state?.allEmployee?.employees || []);
+
+  console.log(empdata, "empdata")
+
+
+  const COMPANY_ID = companyLoginData[0]?.COMPANY_ID;
+  const COMPANY_PARENT_ID = companyLoginData[2]?.COMPANY_PARENT_ID;
+  const COMPANY_USERNAME = companyLoginData[1]?.COMPANY_USERNAME;
+  const COMPANY_PARENT_USERNAME = companyLoginData[3]?.COMPANY_PARENT_USERNAME;
+
+
+
+
 
   // archive
   const archiveEmployee = async (archiveData) => {
@@ -70,7 +63,7 @@ const Employee = ({
           position: toast.POSITION.TOP_CENTER,
           autoClose: 1000,
         });
-        fetchData();
+        dispatch(getEmployeeData(response.data.result))
       } else {
         toast.error("Failed to Archived!", {});
       }
@@ -94,16 +87,19 @@ const Employee = ({
         EMPLOYEE_ID: archiveemp.row?.EMPLOYEE_ID,
       };
 
-      console.log("Data:", data);
 
       const response = await axios.put("/api/unarchive-employee", data);
 
+      console.log("Data:2", response.data.result);
       if (response.status === 200) {
         toast.success("Employee UnArchived!", {
           position: toast.POSITION.TOP_CENTER,
           autoClose: 1000,
         });
-        fetchData();
+        console.log("empdata before update:", empdata);
+        dispatch(setEmployeeData(response.data.result));
+        console.log("empdata after update:", empdata);
+
       } else {
         toast.error("Failed to UnArchived!", {
           // Show for 2 seconds
@@ -117,16 +113,12 @@ const Employee = ({
     }
   };
 
-  console.log(data, "data");
+
 
   const handleClick = (event) => {
     navigate("/company/employees/detail", {
       state: [
         event.row,
-        COMPANY_ID,
-        COMPANY_USERNAME,
-        COMPANY_PARENT_ID,
-        COMPANY_PARENT_USERNAME,
       ],
     });
   };
@@ -134,7 +126,7 @@ const Employee = ({
 
 
 
-// attendance status
+  // attendance status
 
   const columns = [
     { field: "EMPLOYEE_ID", headerName: "ID", width: 60 },
@@ -199,7 +191,7 @@ const Employee = ({
       headerName: "Edit",
       width: 80,
       renderCell: (cellValues) => {
-        return <EmployeeEdit edit={cellValues} refetch={fetchData} />;
+        return <EmployeeEdit edit={cellValues} refetch={empdata} />;
       },
     },
     {
@@ -236,14 +228,21 @@ const Employee = ({
     }
   ];
 
-  const FilterArchive = empData?.filter(
-    (newData) => newData?.ARCHIVED === false
-  );
-  const rows = FilterArchive;
-  const archivedData = empData?.filter((newData) => newData?.ARCHIVED === true);
-  const rows2 = archivedData;
 
-  const filterData = data?.row;
+
+  const FilterArchive = empdata?.filter((newData) => newData?.ARCHIVED === false);
+  console.log("empdata before filter:", FilterArchive);
+
+  const rows = FilterArchive;
+  console.log("rows", rows)
+
+
+  const archivedData = empdata?.filter((newData) => newData?.ARCHIVED === true);
+  const rows2 = archivedData;
+  console.log("rows2", rows2)
+
+
+  // const filterData = data?.row;
 
   return (
     <>
@@ -254,9 +253,10 @@ const Employee = ({
         COMPANY_PARENT_ID={COMPANY_PARENT_ID}
         COMPANY_PARENT_USERNAME={COMPANY_PARENT_USERNAME}
       />
+
       <Box className="box" style={{ background: "#277099" }}>
-        {/* <Navbar toggle={() => setOpenNav((e) => !e)} name={COMPANY_USERNAME} /> */}
-        {resStatus === true ? (<><button
+
+        {empdata && empdata.length > 0 ? (<><button
           variant={"outlined"}
           className={
             display === "unarchive"
@@ -268,55 +268,55 @@ const Employee = ({
           My Employees
         </button>
 
-        <button
-          size="small"
-          variant={"outlined"}
-          className={
-            display === "archive"
-              ? "btn button border-bottom-0 bg-white btn-sm"
-              : "btn btn-sm btn-primary rounded-0 border-0  rounded-0 text-light btn-sm"
-          }
-          onClick={() => setDisplay("archive")}
-        >
-          Archive
-        </button>
-        <EmployeeCreate
-          COMPANY_ID={COMPANY_ID}
-          COMPANY_USERNAME={COMPANY_USERNAME}
-          COMPANY_PARENT_ID={COMPANY_PARENT_ID}
-          COMPANY_PARENT_USERNAME={COMPANY_PARENT_USERNAME}
-          name={"Project"}
-          Update={fetchData}
-        /></> ) : <>
-        <button
-          size="small"
-          disabled
-          className={"btn button border-bottom-0 bg-white btn-sm"}
-        >
-          My Employees
-        </button>
-        <button
-          size="small"
-          disabled
-          className={"btn rounded-0 border-0  rounded-0 text-light btn-primary btn-sm"}
-        >
-           Archive
-        </button>
-        <button
+          <button
+            size="small"
+            variant={"outlined"}
+            className={
+              display === "archive"
+                ? "btn button border-bottom-0 bg-white btn-sm"
+                : "btn btn-sm btn-primary rounded-0 border-0  rounded-0 text-light btn-sm"
+            }
+            onClick={() => setDisplay("archive")}
+          >
+            Archive
+          </button>
+          <EmployeeCreate
+            COMPANY_ID={COMPANY_ID}
+            COMPANY_USERNAME={COMPANY_USERNAME}
+            COMPANY_PARENT_ID={COMPANY_PARENT_ID}
+            COMPANY_PARENT_USERNAME={COMPANY_PARENT_USERNAME}
+            name={"Project"}
 
-          style={{ color: "#277099" }}
-          className="btn rounded-0 border-0  rounded-0 text-light btn-primary btn-sm"
-          size="small"
-          disabled
-        >
+          /></>) : <>
+          <button
+            size="small"
+            disabled
+            className={"btn button border-bottom-0 bg-white btn-sm"}
+          >
+            My Employees
+          </button>
+          <button
+            size="small"
+            disabled
+            className={"btn rounded-0 border-0  rounded-0 text-light btn-primary btn-sm"}
+          >
+            Archive
+          </button>
+          <button
+
+            style={{ color: "#277099" }}
+            className="btn rounded-0 border-0  rounded-0 text-light btn-primary btn-sm"
+            size="small"
+            disabled
+          >
             + Add New Employee
-        </button>
-      </>} 
+          </button>
+        </>}
 
         <div className="myscreen p-3">
           <Box style={{ height: "100%", padding: 0, paddingBottom: "0" }}>
             <>
-            {resStatus == true ? ( <DataGrid
+              {empdata && empdata.length > 0 ? (<DataGrid
                 className="display"
                 sx={{ border: "none" }}
                 rows={display === "archive" ? rows2 : rows}
@@ -333,10 +333,10 @@ const Employee = ({
                 pageSizeOptions={[5]}
                 disableRowSelectionOnClick
                 localeText={{
-                  noRowsLabel: rows.length === 0 && "There is no Emploies..",
+                  noRowsLabel: rows.length === 0 && "There is no Employies..",
                 }}
               />) : resStatus === "error" ? (
-                
+
                 <Box>
                   <div
                     className="p-3"
@@ -351,7 +351,7 @@ const Employee = ({
                       <p>Check your connection and try again. :(</p>
                       <center>
                         <button
-                          onClick={fetchData}
+                          onClick={getEmployeeData}
                           className="btn btn-sm btn-secondary"
                         >
                           Retry

@@ -11,62 +11,40 @@ import { RotatingLines } from "react-loader-spinner";
 import { useSelector } from "react-redux";
 import Animations from "../../components/Animations";
 
-const Project = ({
-  COMPANY_ID,
-  COMPANY_USERNAME,
-  COMPANY_PARENT_ID,
-  COMPANY_PARENT_USERNAME,
-}) => {
-  const projectAllData = useSelector(prev => prev.allProject.user)
-  console.log(COMPANY_ID, "COMPANY_ID");
+const Project = () => {
+  // {
+  //   COMPANY_ID,
+  //   COMPANY_USERNAME,
+  //   COMPANY_PARENT_ID,
+  //   COMPANY_PARENT_USERNAME,
+  // }
+
+  // company Login Data 
+  const companyData = useSelector(state => state?.companyLogin?.user);
+
+  const COMPANY_ID = companyData?.[0]
+  const COMPANY_USERNAME = companyData?.[1]
+  const COMPANY_PARENT_ID = companyData?.[2]
+  const COMPANY_PARENT_USERNAME = companyData?.[3]
+
+  console.log("companyData1", companyData)
+  // Project data 
+
+  const projectData = useSelector(state => state?.allProjectData.projects)
+  
+console.log("hhelo world = >", projectData)
 
   const [open, setOpen] = useState(false);
-  const [ProjectData, setProjectData] = useState([]);
   const [data, setData] = useState({ row: {} });
   const [resStatus, setResStatus] = useState(false);
+  
   const navigate = useNavigate();
 
-  //fatch Projects
-  // const fetchProjects = async (e) => {
-  //   try {
-  //     const response = await axios.put("/api/get_projects", {
-  //       PROJECT_PARENT_ID: COMPANY_ID,
-  //       PROJECT_PARENT_USERNAME: COMPANY_USERNAME,
-  //       PROJECT_MEMBER_PARENT_ID: COMPANY_PARENT_ID,
-  //       PROJECT_MEMBER_PARENT_USERNAME: COMPANY_PARENT_USERNAME,
-  //     });
-  //     const data = response.data;
-  //     setResStatus(true);
-  //     setProjectData(data?.result);
-  //   } catch (err) {
-  //     console.log("Something Went Wrong: =>", err);
-  //     setResStatus("error");
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchProjects();
-  // }, [COMPANY_ID]);
-
-  const MyScreen = styled(Paper)((props) => ({
-    height: "calc(100vh - 29px)",
-    padding: 0,
-    background: "#fff",
-    paddingBottom: "0",
-    overflow: "auto",
-    borderRadius: 0,
-    Border: 0,
-    display: props.screenIndex ? "block" : "flex",
-  }));
 
   const handleClick = (event) => {
     navigate("/company/projects/detail", {
       state: [
         event.row,
-        COMPANY_ID,
-        COMPANY_USERNAME,
-        COMPANY_PARENT_ID,
-        COMPANY_PARENT_USERNAME,
       ],
     });
   };
@@ -159,7 +137,7 @@ const Project = ({
     },
   ];
 
-  const rows = projectAllData;
+  const rows = projectData;
   const filterData = data?.row;
 
   return (
@@ -174,12 +152,12 @@ const Project = ({
 
       <Box className="box" style={{ background: "#277099" }}>
         {/* <Navbar toggle={() => setOpenNav((e) => !e)} name={COMPANY_USERNAME} /> */}
-        {projectAllData && (<ProjectCreate />) }
+        { projectData && projectData.length > 0 && <ProjectCreate /> }
 
         <div className="myscreen p-3">
           <Box style={{ height: "100%", padding: 0, paddingBottom: "0" }}>
             <>    
-             { projectAllData ? (<DataGrid
+             { projectData && projectData.length > 0  ? (<DataGrid
                 sx={{ border: "none" }}
                 rows={rows}
                 columns={columns}
