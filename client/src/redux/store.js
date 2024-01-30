@@ -12,7 +12,8 @@ import {
 } from 'redux-persist/es/constants';
 import CompanyLoginSlice from "./slice/CompanyLoginSlice";
 import AdminSlice from "./slice/AdminSlice";
-import AllCompanyDetail from "./slices/getallCompanySlice";
+// import AllCompanyDetail from "./slices/getallCompanySlice";
+
 // import AllProjectDetail from "./slices/getallProjectSlice"
 import AllAttendanceDetail from "./slices/getAttendanceSlice";
 // import AllEmployeeDetail from "./slices/getEmployee";
@@ -28,6 +29,11 @@ import SingleCompData from "./slice/SingleCompSlice";
 import EmployeeDataSlice from "./slice/EmployeeDataSlice";
 import companyDoc from "./slice/GetCompanyDocSlice";
 import AllSubcontractor from "./slice/SubContractorSlice"
+import attendanceData from "./slice/AttendanceSlice";
+import employee_one from "./slice/EmpDashboardSlice";
+import allCompanyData from "./slice/AllCompanySlice";
+
+
 
 const persistConfig = {
   key: 'root',
@@ -49,9 +55,9 @@ const rootReducer = combineReducers({
   companyLogin: persistedLoginReducer,
   adminLogin: persistedAdminReducer,
   employeeLogin: persistedEmployeeReducer,
-  allCompany: AllCompanyDetail,
   // allProject:AllProjectDetail,
   // allEmployee:AllEmployeeDetail,
+  allCompany: allCompanyData,
   allContractor: AllContractorDetail,
   allAttendation: AllAttendanceDetail,
   allDocument: AllDocumentDetail,
@@ -60,6 +66,9 @@ const rootReducer = combineReducers({
   allEmployee: EmployeeDataSlice,
   companyDocuments: companyDoc,
   allsubcontractor: AllSubcontractor,
+  allAttandanceData: attendanceData,
+  employeeOne : employee_one, 
+
   // setOneCompany:persistedCompanyReducer
 
   // Add other reducers here if needed

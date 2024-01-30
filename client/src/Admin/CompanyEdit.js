@@ -1,4 +1,4 @@
-import * as React from "react";
+import React,{useEffect} from "react";
 import { useState } from "react";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
@@ -16,6 +16,8 @@ import SimpleBackdrop from "../components/Backdrop";
 import {
   validatePhoneNumber,
 } from "../components/Validation";
+import { useDispatch } from "react-redux";
+import { getAllCompany, setCompanyData } from "../redux/slice/AllCompanySlice";
 
 
 const style = {
@@ -57,7 +59,7 @@ export default function CompanyEdit(props) {
     COMPANY_STATUS: companyData.COMPANY_STATUS,
     COMPANY_ROLE: companyData.COMPANY_ROLE,
     COMPANY_USERNAME: companyData.COMPANY_USERNAME,
-  
+
   });
 
   const [formErrors, setFormErrors] = useState({
@@ -69,6 +71,7 @@ export default function CompanyEdit(props) {
     COMPANY_CITY: "",
     COMPANY_ADD2: "",
   });
+  const dispatch = useDispatch();
 
   // ... rest of your code
   // const headers = {
@@ -104,7 +107,6 @@ export default function CompanyEdit(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     // Clear previous validation errors
     setCompanynameError("");
     setCompanyPhoneError("")
@@ -151,33 +153,31 @@ export default function CompanyEdit(props) {
           COMPANY_ADMIN_USERNAME: companyData.COMPANY_PARENT_USERNAME,
           COMPANY_DETAILS_FOR_UPDATE: { ...edit_company },
         },
-    
+
       )
       .then((response) => {
         if (response.data.operation === "failed") {
           setErrorMsg(response.data.errorMsg);
         } else if (response.data.operation === "successfull") {
-          // setLoader(false)
-          // setLoader(true)
-
-          props.reFetchfun();
+        dispatch(setCompanyData(response.data.result));
           toast.success("Fields are updated successfully!", {
             position: toast.POSITION.TOP_CENTER,
             autoClose: 1000,
           });
-          console.log(edit_company,"edit_company 33")
+          props.reFetchfun();
           props.reFetchDetail(edit_company)
           setOpen(false)
           props.companyEDit.update(true);
-          
-          
-          
+
         }
       })
       .catch((error) => {
         console.error(error);
       });
   };
+  useEffect(() => {
+    getAllCompany()
+  }, [edit_company]);
 
   const StyledFab = styled(Fab)({
     position: "fixed",
@@ -195,7 +195,7 @@ export default function CompanyEdit(props) {
           <EditNoteOutlinedIcon
             onClick={handleOpen}
             color="success"
-            style={{ cursor: "pointer",fontSize:"18px",color:"#fff" }}
+            style={{ cursor: "pointer", fontSize: "18px", color: "#fff" }}
           />
         </button>
       </Tooltip>
@@ -214,7 +214,7 @@ export default function CompanyEdit(props) {
             <form className="p-4 overflow-auto">
               <h5>Edit company</h5>
               <div className="row">
-              <div className="form-group py-2 col-xl-6">
+                <div className="form-group py-2 col-xl-6">
                   <label>Company name</label>
                   <input
                     type="text"
@@ -235,7 +235,7 @@ export default function CompanyEdit(props) {
                   <input
                     type="text"
                     className={`form-control form-control-2 rounded-0 ${usernameError ? "is-invalid" : ""
-                  }`}
+                      }`}
                     placeholder="Enter Company Email"
                     value={edit_company.COMPANY_USERNAME}
                     name="COMPANY_EMAIL"
@@ -246,20 +246,20 @@ export default function CompanyEdit(props) {
                 </div>
               </div>
               <div className="row">
-                  {/* Phone Number */}
+                {/* Phone Number */}
                 <div className="form-group py-2 col-xl-6">
                   <label>Phone Number</label>
                   <input
                     type="number"
                     className={`form-control form-control-2 rounded-0 ${companyphoneError ? "is-invalid" : ""
-                  }`}
+                      }`}
                     placeholder="Enter Number"
                     value={edit_company.COMPANY_PHONE}
                     name="COMPANY_PHONE"
                     onChange={handleCreate}
                     label="Phone Number"
                   />
-                    {companyphoneError && (
+                  {companyphoneError && (
                     <div className="invalid-feedback">{companyphoneError}</div>
                   )}
 
@@ -273,9 +273,9 @@ export default function CompanyEdit(props) {
                     name="COMPANY_ROLE"
                     value={edit_company.COMPANY_ROLE}
                     onChange={handleCreate}
-                    
+
                   >
-                    <option selected>{edit_company.COMPANY_ROLE ?  edit_company.COMPANY_ROLE : "--Choose--"}</option>
+                    <option selected>{edit_company.COMPANY_ROLE ? edit_company.COMPANY_ROLE : "--Choose--"}</option>
 
                     {companytype.map((e, key) => {
                       return (
@@ -301,7 +301,7 @@ export default function CompanyEdit(props) {
                     <option selected> Annual</option>
                   </select>
                 </div>
-                
+
                 <div className="form-group col-xl-4">
                   <label>Company Status</label>
                   <select
@@ -310,7 +310,7 @@ export default function CompanyEdit(props) {
                     value={edit_company.COMPANY_STATUS}
                     onChange={handleCreate}
                   >
-                    <option selected> {edit_company.COMPANY_STATUS ?  edit_company.COMPANY_STATUS : "--Select Status--"}</option>
+                    <option selected> {edit_company.COMPANY_STATUS ? edit_company.COMPANY_STATUS : "--Select Status--"}</option>
                     <option selected>Active</option>
                     <option selected> Inactive</option>
                   </select>
@@ -390,8 +390,8 @@ export default function CompanyEdit(props) {
                   value={edit_company.COMPANY_ADD2}
                   onChange={handleCreate}
                   required
-                  // rows="4"
-                  // cols="50"
+                // rows="4"
+                // cols="50"
                 />
               </div>
               <Button

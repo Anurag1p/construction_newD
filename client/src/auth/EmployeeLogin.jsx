@@ -43,9 +43,12 @@ function Login(props) {
         setLoading(false)
         const data = res.user.displayName
         // navigate(`/employee` , {state : data});
+        console.log(data, "data")
         const param = data?.split("&&")
         if (param[4] === "employee") {
-          navigate(`/employee/${param[0]}/${param[1]}/${param[2]}/${param[3]}`, { state: data });
+          navigate(`/employee/home`);
+          // navigate(`/employee/${param[1]}/details`, { state: data });
+          // navigate(`/employee/${param[0]}/${param[1]}/${param[2]}/${param[3]}`, { state: data });
         } else {
           navigate("/");
           setErrorMsg("Employee: Error (auth/invalid-login-credentials).");

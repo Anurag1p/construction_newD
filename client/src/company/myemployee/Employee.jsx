@@ -12,7 +12,7 @@ import { RotatingLines } from "react-loader-spinner";
 import { useDispatch, useSelector } from "react-redux";
 
 // import for refetch the data to update 
-import { getEmployeeData,setEmployeeData } from "../../redux/slice/EmployeeDataSlice";
+import { getEmployeeData, setEmployeeData } from "../../redux/slice/EmployeeDataSlice";
 
 const Employee = () => {
 
@@ -30,6 +30,7 @@ const Employee = () => {
   // const empdata = useSelector((state) => state?.allEmployee?.employees);
   const empdata = useSelector((state) => state?.allEmployee?.employees || []);
 
+  // const RefetchData = getEmployeeData(response )
   console.log(empdata, "empdata")
 
 
@@ -129,12 +130,13 @@ const Employee = () => {
   // attendance status
 
   const columns = [
-    { field: "EMPLOYEE_ID", headerName: "ID", width: 60 },
+    { field: 'sr', headerName: 'S No.', width: 60, renderCell: (params) => params.row.id + 1 },
     {
       field: "EMPLOYEE_USERNAME",
       headerName: "Employee Email",
       width: 120,
     },
+    { field: "EMPLOYEE_ID", headerName: "ID", width: 60 },
     {
       field: "EMPLOYEE_NAME",
       headerName: "Name",
@@ -169,7 +171,7 @@ const Employee = () => {
     },
     {
       field: "action",
-      headerName: "Action",
+      headerName: "Details",
       width: 80,
       renderCell: (cellValues) => {
         return (
@@ -191,7 +193,7 @@ const Employee = () => {
       headerName: "Edit",
       width: 80,
       renderCell: (cellValues) => {
-        return <EmployeeEdit edit={cellValues} refetch={empdata} />;
+        return <EmployeeEdit edit={cellValues} />;
       },
     },
     {
@@ -230,16 +232,16 @@ const Employee = () => {
 
 
 
+
   const FilterArchive = empdata?.filter((newData) => newData?.ARCHIVED === false);
-  console.log("empdata before filter:", FilterArchive);
-
-  const rows = FilterArchive;
-  console.log("rows", rows)
-
+  // this extra line is only added to map the sr number with all rows of data 
+  const rows = FilterArchive.map((data, index) => ({ id: index, ...data }));
+  console.log("rows", rows);
 
   const archivedData = empdata?.filter((newData) => newData?.ARCHIVED === true);
-  const rows2 = archivedData;
-  console.log("rows2", rows2)
+  const rows2 = archivedData.map((data, index) => ({ id: index, ...data }));
+  console.log("rows2", rows2);
+
 
 
   // const filterData = data?.row;

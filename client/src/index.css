@@ -167,3 +167,18 @@ p {
   margin: 20px;
   width: 300px;
 }
+
+.logoutbtn{
+  text-transform: uppercase;
+  border:1px solid tan !important;
+  border-radius: 50px;
+  color: tan;
+  background-color: white;
+
+}
+.logoutbtn:hover{
+  background-color: black;
+  border: 1px solid white;
+  color: white;
+  transition: 1s;
+}

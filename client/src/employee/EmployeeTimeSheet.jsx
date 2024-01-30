@@ -174,14 +174,14 @@ const EmployeeTimeSheet = (props) => {
       width: 120,
       renderCell: (cellValues) => {
         return (
-          cellValues?.row.ATTENDANCE_TYPE_IN == "automatic" && cellValues?.row.ATTENDANCE_IN ? <>
+          cellValues?.row.ATTENDANCE_TYPE_IN === "automatic" && cellValues?.row.ATTENDANCE_IN ? <>
             {cellValues.row.ATTENDANCE_IN && moment(cellValues?.row.ATTENDANCE_IN).utcOffset(0).format("LT")}
           </> : <>{"absent"}</>
         );
 
       },
       cellClassName: (cellValues) => {
-        return cellValues?.row.ATTENDANCE_TYPE_IN == "automatic" && cellValues?.row.ATTENDANCE_IN ? "bg-success text-white border" : "bg-danger text-white border"
+        return cellValues?.row.ATTENDANCE_TYPE_IN === "automatic" && cellValues?.row.ATTENDANCE_IN ? "bg-success text-white border" : "bg-danger text-white border"
       }
     },
 
@@ -191,13 +191,13 @@ const EmployeeTimeSheet = (props) => {
       width: 150,
       renderCell: (cellValues) => {
         return (
-          cellValues?.row.ATTENDANCE_TYPE_OUT == "automatic" && cellValues?.row.ATTENDANCE_OUT ? <>
+          cellValues?.row.ATTENDANCE_TYPE_OUT === "automatic" && cellValues?.row.ATTENDANCE_OUT ? <>
             {cellValues?.row.ATTENDANCE_OUT && moment(cellValues?.row.ATTENDANCE_OUT).utcOffset(0).format("LT")}
           </> : <>{"absent"}</>
         );
       },
       cellClassName: (cellValues) => {
-        return cellValues?.row.ATTENDANCE_TYPE_OUT == "automatic" && cellValues?.row.ATTENDANCE_OUT ? "bg-success text-white border" : "bg-danger text-white border"
+        return cellValues?.row.ATTENDANCE_TYPE_OUT === "automatic" && cellValues?.row.ATTENDANCE_OUT ? "bg-success text-white border" : "bg-danger text-white border"
       }
     },
 
@@ -207,8 +207,8 @@ const EmployeeTimeSheet = (props) => {
       width: 200,
       renderCell: (cellValues) => {
         return (
-          cellValues?.row.ATTENDANCE_OUT && cellValues?.row.ATTENDANCE_TYPE_OUT == "automatic" ? <>
-            {timeValueHours(moment(cellValues?.row.ATTENDANCE_TYPE_OUT == "automatic" ? cellValues?.row.ATTENDANCE_OUT : "").utcOffset(0).format("LT"), moment(cellValues?.row.ATTENDANCE_TYPE_IN == "automatic" ? cellValues?.row.ATTENDANCE_IN : "").utcOffset(0).format("LT"))}
+          cellValues?.row.ATTENDANCE_OUT && cellValues?.row.ATTENDANCE_TYPE_OUT === "automatic" ? <>
+            {timeValueHours(moment(cellValues?.row.ATTENDANCE_TYPE_OUT === "automatic" ? cellValues?.row.ATTENDANCE_OUT : "").utcOffset(0).format("LT"), moment(cellValues?.row.ATTENDANCE_TYPE_IN == "automatic" ? cellValues?.row.ATTENDANCE_IN : "").utcOffset(0).format("LT"))}
           </> : ""
         );
       },
@@ -223,7 +223,7 @@ const EmployeeTimeSheet = (props) => {
       renderCell: (cellValues) => {
         return (
           cellValues?.row.ATTENDANCE_OUT && <>
-            {Overtime(moment(cellValues?.row.ATTENDANCE_TYPE_OUT == "automatic" ? cellValues?.row.ATTENDANCE_OUT : "").utcOffset(0).format("LT"), moment(cellValues?.row.ATTENDANCE_TYPE_OUT == "automatic" ? cellValues?.row.ATTENDANCE_IN : "").utcOffset(0).format("LT"))}
+            {Overtime(moment(cellValues?.row.ATTENDANCE_TYPE_OUT === "automatic" ? cellValues?.row.ATTENDANCE_OUT : "").utcOffset(0).format("LT"), moment(cellValues?.row.ATTENDANCE_TYPE_OUT == "automatic" ? cellValues?.row.ATTENDANCE_IN : "").utcOffset(0).format("LT"))}
           </>
         );
       },
@@ -234,7 +234,7 @@ const EmployeeTimeSheet = (props) => {
       width: 150,
       renderCell: (cellValues) => {
         return (
-          cellValues?.row.ATTENDANCE_TYPE_IN == "automatic" &&  cellValues?.row.ATTENDANCE_TYPE_OUT == "automatic" &&  cellValues?.row.ATTENDANCE_IN && cellValues?.row.ATTENDANCE_OUT ? <>
+          cellValues?.row.ATTENDANCE_TYPE_IN === "automatic" &&  cellValues?.row.ATTENDANCE_TYPE_OUT === "automatic" &&  cellValues?.row.ATTENDANCE_IN && cellValues?.row.ATTENDANCE_OUT ? <>
             {"present"}
           </> : <>
             {"absent"}
@@ -242,7 +242,7 @@ const EmployeeTimeSheet = (props) => {
         );
       },
       cellClassName: (cellValues) => {
-        return cellValues?.row.ATTENDANCE_TYPE_IN == "automatic" &&  cellValues?.row.ATTENDANCE_TYPE_OUT == "automatic" &&  cellValues?.row.ATTENDANCE_IN && cellValues?.row.ATTENDANCE_OUT  ? "bg-success text-light border" : "bg-danger text-white border"
+        return cellValues?.row.ATTENDANCE_TYPE_IN === "automatic" &&  cellValues?.row.ATTENDANCE_TYPE_OUT === "automatic" &&  cellValues?.row.ATTENDANCE_IN && cellValues?.row.ATTENDANCE_OUT  ? "bg-success text-light border" : "bg-danger text-white border"
       }
     },
     {
@@ -318,7 +318,7 @@ const EmployeeTimeSheet = (props) => {
         </div>
 
         {/* data gird */}
-        {resStatus == true ? <DataGrid
+        {resStatus === true ? <DataGrid
           className="display"
           style={{ height: "55vh" }}
           rows={workvalue}
@@ -355,7 +355,7 @@ const EmployeeTimeSheet = (props) => {
           pageSizeOptions={[5]}
           // checkboxSelection
           disableRowSelectionOnClick
-          localeText={{ noRowsLabel: workvalue.length == 0 && "No request available" }}
+          localeText={{ noRowsLabel: workvalue.length === 0 && "No request available" }}
         /> : resStatus === "error" ? <div
         style={{
           position: "absolute",

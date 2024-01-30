@@ -12,9 +12,7 @@ import "./assests/css/sidebar.css";
 import "./assests/css/style.css";
 import "./assests/css/graph.css";
 import AdminDashboard from "./Admin/AdminDashboard";
-import EmployeeAttendance from "./employee/EmployeeAttendance";
-import EmployeeLogin from "./auth/EmployeeLogin";
-import EmployeeHistory from "./employee/EmployeeHistory";
+
 // import CompanyDashboard from "./company/dashboard/Dashboard";
 // import ProjectHome from "./company/myproject/ProjectAllocate";
 // import EmployeeSrc from "./employee/EmployeeSrc";
@@ -26,7 +24,6 @@ import Firecreate from "./components/Firecreate";
 import UserLogin from "./auth/UserLogin";
 import Updates from "./auth/Update";
 import EmployeeTimeSheet from "./company/myemployee/EmployeeTimeSheet";
-import EmployeeTimeSheetUser from "./employee/EmployeeTimeSheetUser";
 import Sidebar from "./components/Sidebar";
 import Project from "./company/myproject/Project";
 import axios from "axios";
@@ -35,38 +32,53 @@ import ProjectAllocate from "./company/myproject/ProjectAllocate";
 import ProjectLoc from "./company/myproject/ProjectLoc";
 import ProjectDocuments from "./company/myproject/ProjectDocuments";
 import Employee from "./company/myemployee/Employee";
-import EmployeeDetail from "./employee/EmployeeDetail";
-import EmployeeDetai from "./company/myemployee/EmployeeDetail";
+import EmployeeDetails from "./company/myemployee/EmployeeDetail";
 import EmployeeManual from "./company/myemployee/EmployeeManual";
 import EmployeeDocuments from "./company/myemployee/EmployeeDocuments";
 import AttendanceAcknowledge from "./company/attendance/AttendanceAcknowledge";
 import Documents from "./company/document/Documents";
 import Contractor from "./company/mycontractor/Contractor";
 import ContractorDetail from "./company/mycontractor/ContractorDetail";
-import Dashboard from "./contractors/dashboard/Dashboard";
+import Dashboard from "./company/dashboard/Dashboard"; //company dashboard
 import { useDispatch, useSelector } from "react-redux";
 import { setCompanyuser } from "./redux/slice/CompanyLoginSlice"
 // import { setOneCompany } from "./redux/slices/getOneCompanySlice"
 import SubContractorDoc from "./company/mycontractor/SubContractorDoc";
 
+// /.......Employees
+import EmployeeLoginHome from "./employee/EmployeeLoginHome";
+import EmployeeTimeSheetUser from "./employee/EmployeeTimeSheetUser";
+import EmployeeAttendance from "./employee/EmployeeAttendance";
+import EmployeeHistory from "./employee/EmployeeHistory";
+
 // redux setup anurag 
 import { getProjectData } from "./redux/slice/getallProjectSlice";
 import { getSingleCompData } from "./redux/slice/SingleCompSlice";
 import { getEmployeeData } from "./redux/slice/EmployeeDataSlice";
-import {getAllDocuments} from "./redux/slice/GetCompanyDocSlice";
-import {getAllSubcontractor} from "./redux/slice/SubContractorSlice";
-
+import { getAllDocuments } from "./redux/slice/GetCompanyDocSlice";
+import { getAllSubcontractor } from "./redux/slice/SubContractorSlice";
+import { getAllttendance } from "./redux/slice/AttendanceSlice";
+import { getAllCompany } from "./redux/slice/AllCompanySlice"
 function App() {
 
   const [userName, setUserName] = useState("");
   const dispatch = useDispatch()
+  console.log(userName[2], "username")
+
+  const AdminLoginData = useSelector(state => state?.adminLogin?.user)
+  const admin_id = userName[2]
+  const admin_username = userName[3]
+  // console.log(admin_id, admin_username, "hello")
   const companyData = useSelector(prev => prev?.companyLogin?.user)
+  console.log(companyData, "login")
   // const companyAllData = useSelector(prev => prev?.setOneCompany?.user)
   // const projectAllData = useSelector(prev => prev?.allProject?.user);
 
   const singleCompany = useSelector(state => state?.singleCompData?.singleComp);
+  // const employeeData = useSelector(state => state?.allEmployee?.employees)
 
- 
+  const empdata = useSelector((state) => state?.allEmployee?.employees || []);
+
 
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
@@ -126,7 +138,7 @@ function App() {
     }))
   }, [dispatch, COMPANY_ID, COMPANY_USERNAME, COMPANY_PARENT_USERNAME, COMPANY_PARENT_ID])
 
-//getting the documents data from store
+  //getting the documents data from store
   useEffect(() => {
     dispatch(getAllDocuments({
       DOCUMENT_REF_ID: COMPANY_ID,
@@ -136,15 +148,41 @@ function App() {
   }, [dispatch, COMPANY_ID, COMPANY_USERNAME, COMPANY_PARENT_USERNAME])
 
 
-  useEffect( () => {
-    dispatch( getAllSubcontractor({
-        SUBCONTRACTOR_PARENT_ID: COMPANY_ID,
-        SUBCONTRACTOR_PARENT_USERNAME:COMPANY_USERNAME,
-        SUBCONTRACTOR_MEMBER_PARENT_ID: COMPANY_PARENT_ID,
-        SUBCONTRACTOR_MEMBER_PARENT_USERNAME:COMPANY_PARENT_USERNAME
+  //getting the documents data from SUBCONTRACTOR
+  useEffect(() => {
+    dispatch(getAllSubcontractor({
+      SUBCONTRACTOR_PARENT_ID: COMPANY_ID,
+      SUBCONTRACTOR_PARENT_USERNAME: COMPANY_USERNAME,
+      SUBCONTRACTOR_MEMBER_PARENT_ID: COMPANY_PARENT_ID,
+      SUBCONTRACTOR_MEMBER_PARENT_USERNAME: COMPANY_PARENT_USERNAME
     }))
   }, [dispatch, COMPANY_ID, COMPANY_USERNAME, COMPANY_PARENT_USERNAME, COMPANY_PARENT_ID])
- 
+
+  //getting the attendance data from store
+  useEffect(() => {
+    dispatch(getAllttendance({
+      ADMIN_USERNAME: COMPANY_PARENT_USERNAME,
+      EMPLOYEE_PARENT_USERNAME: COMPANY_USERNAME,
+    }))
+  }, [dispatch, COMPANY_USERNAME, COMPANY_PARENT_USERNAME])
+
+  //getting the employeeData from 
+  // useEffect(() => {
+  //   dispatch(getIndividualEmployee({
+  //     EMPLOYEE_ID: userName[0],
+  //     ADMIN_USERNAME: userName[3],
+  //   }))
+  // }, [dispatch, userName[3], userName[0]])
+
+
+  // getting the data of all company 
+  useEffect(() => {
+    dispatch(getAllCompany({
+      COMPANY_PARENT_ID: admin_id,
+      COMPANY_PARENT_USERNAME: admin_username,
+    }))
+  }, [dispatch, admin_id, admin_username])
+
   return (
     <div
       className="wrapper"
@@ -161,26 +199,7 @@ function App() {
             <Route path="/employee/history" element={<EmployeeHistory />} />
             <Route path="/myadmin" element={<AdminDashboard />} />
             <Route path="/test" element={<Updates />} />
-            {/* <Route
-              path="/company/dashboard"
-              element={<CompanyDashboard data={userName} />}
-            /> */}
-            {/* <Route
-              path="/employee/:COMPANY_ID/:COMPANY_USERNAME/:COMPANY_PARENT_ID/:COMPANY_PARENT_USERNAME"
-              element={<EmployeeDetail state={userName} />}
-            /> */}
-            <Route
-              path="/employee/attendance"
-              element={<EmployeeAttendance state={userName} />}
-            />
-            <Route
-              path="/employee/timesheet"
-              element={<EmployeeTimeSheetUser />}
-            />
-            <Route
-              path="/employee/attendance/:latt/:lngi/:areas/:loca/:employees/:projects/:projectids"
-              element={<EmployeeAttendance state={userName} />}
-            />
+
 
             {/* compnay dashboard */}
             <Route
@@ -213,7 +232,7 @@ function App() {
             />
             {/* project */}
 
-            {/* My employees */}
+            {/* My company employees */}
             <Route
               path="/company/employees"
               element={
@@ -228,7 +247,7 @@ function App() {
 
             <Route
               path="/company/employees/detail"
-              element={<EmployeeDetai />}
+              element={<EmployeeDetails />}
             />
             <Route
               path="/company/employees/timesheet"
@@ -272,7 +291,6 @@ function App() {
             />
             {/* document company */}
 
-
             {/* My contractors */}
             <Route
               path="/company/subcontractors"
@@ -289,9 +307,38 @@ function App() {
               path="/company/subcontractors/detail"
               element={<ContractorDetail />}
             />
+
             <Route
               path="/company/subcontractors/documents"
               element={<SubContractorDoc />}
+            />
+
+
+
+
+            {/* for employee login ... */}
+            <Route
+              path="/employee/:COMPANY_USERNAME/details"
+              element={<EmployeeLoginHome state={userName} />}
+            />
+            <Route
+              path="/employee/mark-attendance"
+              element={<EmployeeAttendance state={userName} />}
+            />
+
+
+            {/*...... for employee section  only ...... */}
+            <Route
+              path="/employee/project-assigned"
+              element={<EmployeeLoginHome state={userName} />}
+            />
+            <Route
+              path="/employee/attendance-history"
+              element={<EmployeeTimeSheetUser state={userName} />}
+            />
+            <Route
+              path="/employee/attendance/:latt/:lngi/:areas/:loca/:employees/:projects/:projectids"
+              element={<EmployeeAttendance state={userName} />}
             />
 
             {/* My contractos */}
@@ -309,11 +356,16 @@ function App() {
               path="/company/documents/:COMPANY_ID/:COMPANY_USERNAME/:COMPANY_PARENT_ID/:COMPANY_PARENT_USERNAME"
               element={<Document />}
             /> */}
+
             {/* <Route
               path="/company/contractor/:COMPANY_ID/:COMPANY_USERNAME/:COMPANY_PARENT_ID/:COMPANY_PARENT_USERNAME"
               element={<SubContract />}
             /> */}
+
             <Route path="/temp/" element={<Firecreate />} />
+
+            {/* testform  */}
+            {/* <Route path="/formvalidations" element={<ValidationSchemaExample/>} /> */}
           </>
         </Routes>
       </BrowserRouter>

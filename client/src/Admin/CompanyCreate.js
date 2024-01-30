@@ -16,6 +16,8 @@ import {
   validateEmail,
   validatePhoneNumber,
 } from "../components/Validation";
+import { getAllCompany, setCompanyData } from "../redux/slice/AllCompanySlice";
+import { useDispatch } from "react-redux";
 const style = {
   position: "absolute",
   top: "50%",
@@ -31,13 +33,14 @@ const style = {
 
 export default function CompanyCreate(props) {
   console.log(props, "cprops")
+
   const [open, setOpen] = React.useState(false);
   const [loader, setLoader] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-
+  const dispatch = useDispatch();
 
   const [create_company, setCreate_company] = useState({
     COMPANY_NAME: "",
@@ -51,13 +54,10 @@ export default function CompanyCreate(props) {
     COMPANY_SUBSCRIPTION: "",
     COMPANY_STATUS: "",
   });
+
   const [emailError, setEmailError] = useState("");
   const [companyphoneError, setCompanyPhoneError] = useState("");
   const [companynameError, setCompanynameError] = useState("");
-
-
-
-
 
   const handleCreate = (e) => {
     setCreate_company({ ...create_company, [e.target.name]: e.target.value });
@@ -124,11 +124,14 @@ export default function CompanyCreate(props) {
           setErrorMsg(response.data.errorMsg);
           setEmailError(response.data.errorMsg ? "Email already exist" : "")
         } else if (response.data.operation === "successfull") {
+
+          dispatch(setCompanyData(response.data.result));
           toast.success("Company Created successfully!", {
             position: toast.POSITION.TOP_CENTER,
             autoClose: 1000,
           });
-          props.Update(() => response.data.result);
+          props.Update();
+
           setOpen(false);
         }
       })
@@ -161,7 +164,7 @@ export default function CompanyCreate(props) {
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
-        style={{zIndex:9999999}}
+        style={{ zIndex: 9999999 }}
       >
         <Container
           id="content"

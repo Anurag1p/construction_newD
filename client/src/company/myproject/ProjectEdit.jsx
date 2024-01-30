@@ -17,6 +17,8 @@ import {
   Skeleton,
   Typography,
 } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { getProjectData, setAllproject } from "../../redux/slice/getallProjectSlice";
 
 const style = {
   position: "absolute",
@@ -38,6 +40,7 @@ export default function FeditProjectEdit(props) {
 
   const editProjectData = props?.edit.row;
 
+  const dispatch = useDispatch();
   console.log("editProjectData", editProjectData);
 
   const [EditProject, setEditProject] = useState({
@@ -117,7 +120,7 @@ export default function FeditProjectEdit(props) {
       return;
     }
 
-  
+
     axios
       .put(
         "/api/update_projects",
@@ -140,14 +143,14 @@ export default function FeditProjectEdit(props) {
             autoClose: 2000,
           });
         } else if (response.data.operation === "successfull") {
-          props.Update()
-          handleClose();
-          console.log("anu", response);
-
+          dispatch(setAllproject(response.data.result));
           toast.success("Project Updated successfully!", {
             position: toast.POSITION.TOP_CENTER,
             autoClose: 2000,
           });
+          dispatch(getProjectData(response.data.result));
+        
+          handleClose();
 
         }
       })
@@ -177,17 +180,16 @@ export default function FeditProjectEdit(props) {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box  className="modal-content">
+        <Box className="modal-content">
           <form onSubmit={handleSubmit} className="overflow-auto">
-          <h5>Edit project</h5>
+            <h5>Edit project</h5>
             <div className="row py-2">
               <div className="form-group col-xl-4">
                 <label> Project Username</label>
                 <input
                   type="text"
-                  className={`form-control form-control-2 rounded-0 ${
-                    usernameError ? "is-invalid" : ""
-                  }`}
+                  className={`form-control form-control-2 rounded-0 ${usernameError ? "is-invalid" : ""
+                    }`}
                   placeholder="Username"
                   value={EditProject.PROJECT_USERNAME}
                   name="PROJECT_USERNAME"
@@ -201,9 +203,8 @@ export default function FeditProjectEdit(props) {
                 <label>Project Name</label>
                 <input
                   type="text"
-                  className={`form-control form-control-2 rounded-0 ${
-                    nameError ? "is-invalid" : ""
-                  }`}
+                  className={`form-control form-control-2 rounded-0 ${nameError ? "is-invalid" : ""
+                    }`}
                   id="inputname"
                   placeholder="Project Name"
                   value={EditProject.PROJECT_NAME}
@@ -219,9 +220,8 @@ export default function FeditProjectEdit(props) {
                 <label>Account</label>
                 <input
                   type="number"
-                  className={`form-control form-control-2 rounded-0 ${
-                    accountError ? "is-invalid" : ""
-                  }`}
+                  className={`form-control form-control-2 rounded-0 ${accountError ? "is-invalid" : ""
+                    }`}
                   id="inputPassword4"
                   placeholder="Enter Account
                    Number"

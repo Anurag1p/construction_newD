@@ -10,7 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import { Button, Grid } from "@mui/material";
 import { useDispatch } from "react-redux";
-import { setSubcontractor } from "../../redux/slice/SubContractorSlice";
+import { setSubcontractor, getAllSubcontractor } from "../../redux/slice/SubContractorSlice";
 
 const style = {
     position: "absolute",
@@ -151,14 +151,14 @@ export default function EditSubcontract(props) {
                             autoClose: 1000,
                         });
                     } else if (response.data.operation === "successfull") {
+                        dispatch(setSubcontractor(response.data.result));
+                        dispatch(getAllSubcontractor(response.data.result));
                         toast.success("Subcontract Updated successfully!", {
                             position: toast.POSITION.TOP_CENTER,
                             autoClose: 1000,
                         });
                         // props.refetch();
 
-                        setEditsubcontract({});
-                        dispatch(setSubcontractor(response.data.result))
                         setOpen(false);
                     }
                 })

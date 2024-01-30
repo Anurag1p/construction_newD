@@ -13,12 +13,14 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { Link, useNavigate } from "react-router-dom";
 import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
-import { Button } from "bootstrap";
+import { Button } from "@mui/material";
 import Navbar from "./Navbar";
 import { auth } from "../firebase";
 import axios from "axios";
 import zIndex from "@mui/material/styles/zIndex";
 import { useSelector } from "react-redux";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowRight, faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 
 const Sidebar = ({
   COMPANY_ID,
@@ -30,10 +32,13 @@ const Sidebar = ({
 }) => {
 
   const companyData = useSelector(state => state?.setOneCompany?.user)
+  const companyLogin = useSelector(state => state?.companyLogin?.user)
 
+  const companyName = companyLogin[1]?.split('@');
 
-  
-  console.log(COMPANY_ID, "control");
+  console.log(companyName, "control");
+  const company = companyName[0]?.slice(-(companyName[0].length-1))
+  console.log(company, "company")
   const navigate = useNavigate()
   const [data, setData] = useState([]);
 
@@ -52,7 +57,7 @@ const Sidebar = ({
 
   const drawerWidth = 0;
   const filterData = companyData?.[0]
-  console.log("sidebar", companyData)
+  // console.log("sidebar", companyName?.remove(0,5))
 
   // console.log(filterData, "wh")
 
@@ -77,12 +82,15 @@ const Sidebar = ({
             class: "sidebar display-sidebar-desk border",
             style : {zIndex: 25}
           }}
+         
         >
           <div
             className="sidebar-header d-flex p-3 f-20"
             style={{ justifyContent: "space-between" }}
           >
-            <h5 className="pt-2">{filterData?.COMPANY_NAME?.toString(0,10)}</h5>
+            {/* <h5 className="pt-2" style={{color:"tan"}}>{companyName[0])}</h5> */}
+            <h5 className="pt-2" style={{ color: "tan" }}>{companyName[0]?.charAt(0).toUpperCase() + company}</h5>
+
             <Tooltip title={COMPANY_USERNAME} sx={{zIndex:26}}>
               <Avatar>{filterData?.COMPANY_NAME?.substring(0, 1)}</Avatar>
             </Tooltip>
@@ -166,11 +174,13 @@ const Sidebar = ({
           >
             <div className="logout_icon ">
               <button
-                className="text-dark text-uppercase btn-link border-0 bg-white"
+                className="logoutbtn"
                 type="submit"
                 onClick={Logout}
+               
               >
-                <LogoutIcon style={{ display: "inline" }} onClick={Logout} />  Logout
+                {/* <LogoutIcon style={{ display: "inline", color:"red", fontSize:"large" }} onClick={Logout} />  */}
+                <FontAwesomeIcon icon={faArrowRightFromBracket} onClick={Logout} /> Logout
               </button>
             </div>
           </div>
@@ -210,7 +220,7 @@ const Sidebar = ({
             <Link
               to={`/company/dashboard`}
               className="nav-link"
-              style={{ background: active == 0 ? "#f3f3f3" : "" }}
+              style={{ background: active === 0 ? "#f3f3f3" : "" }}
             >
               <ListItem disablePadding>
                 <ListItemButton sx={{ fontSize: "16px" }}>
@@ -221,7 +231,7 @@ const Sidebar = ({
             <Link
               to={`/company/projects`}
               className="nav-link"
-              style={{ background: active == 1 ? "#f3f3f3" : "" }}
+              style={{ background: active === 1 ? "#f3f3f3" : "" }}
             >
               <ListItem disablePadding>
                 <ListItemButton sx={{ fontSize: "16px" }}>
@@ -232,7 +242,7 @@ const Sidebar = ({
             <Link
               to={`/company/employees`}
               className="nav-link"
-              style={{ background: active == 2 ? "#f3f3f3" : "" }}
+              style={{ background: active === 2 ? "#f3f3f3" : "" }}
             >
               <ListItem disablePadding>
                 <ListItemButton sx={{ fontSize: "16px" }}>
@@ -243,7 +253,7 @@ const Sidebar = ({
             <Link
               to={`/company/attendance`}
               className="nav-link"
-              style={{ background: active == 3 ? "#f3f3f3" : "" }}
+              style={{ background: active === 3 ? "#f3f3f3" : "" }}
             >
               <ListItem disablePadding>
                 <ListItemButton sx={{ fontSize: "16px" }}>

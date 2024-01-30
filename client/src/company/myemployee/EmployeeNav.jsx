@@ -37,7 +37,7 @@ const EmployeeNav = ({ filterData, active, COMPANY_ID, COMPANY_USERNAME, COMPANY
           }
           variant={1 === active ? "outlined" : "outlined"}
           className={
-            1 == active
+            1 === active
               ? "btn button border-bottom-0 bg-white"
               : "btn rounded-0 border-bottom-0  rounded-0 text-light"
           }

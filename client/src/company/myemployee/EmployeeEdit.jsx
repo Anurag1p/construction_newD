@@ -1,11 +1,17 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import { Button, Container } from "@mui/material";
-import country from "../../jsonlist/employeeRole.json";
+import country from "../../jsonlist/countriess.json";
+import env from "react-dotenv";
+
+// redux setup 
+import { useDispatch, useSelector } from "react-redux";
+import { setEmployeeData } from "../../redux/slice/EmployeeDataSlice";
+import { getEmployeeData } from "../../redux/slice/EmployeeDataSlice";
 
 const style = {
   position: "absolute",
@@ -25,67 +31,29 @@ export default function EmployeeEdit(props) {
   const [submitting, setSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-
-  const [editEmployee, setEditEmployee] = useState({
-    EMPLOYEE_USERNAME: '',
-    EMPLOYEE_NAME: '',
-    EMPLOYEE_EMAIL: '',
-    EMPLOYEE_STATE: '',
-    EMPLOYEE_CITY: '',
-    EMPLOYEE_COUNTRY: '',
-    EMPLOYEE_PHONE: '',
-    EMPLOYEE_HOURLY_WAGE: '',
-    EMPLOYEE_ROLE: '',
-    EMPLOYEE_EMPLMNTTYPE: '',
-    EMPLOYEE_DOB: '',
-    EMPLOYEE_HIRE_DATE: '',
-    EMPLOYEE_ADD: '',
-    EMPLOYEE_PASSWORD: '',
-  });
-
-  const editdata = props?.edit.row;
+  const editdata = props?.edit.row
   // console.log("first", editdata)
 
+  const dispatch = useDispatch();
 
+  const [editEmployee, setEditEmployee] = useState({
+    EMPLOYEE_USERNAME: editdata.EMPLOYEE_USERNAME,
+    EMPLOYEE_NAME: editdata.EMPLOYEE_NAME,
+    EMPLOYEE_EMAIL: editdata.EMPLOYEE_EMAIL,
+    EMPLOYEE_STATE: editdata.EMPLOYEE_STATE,
+    EMPLOYEE_CITY: editdata.EMPLOYEE_CITY,
+    EMPLOYEE_COUNTRY: editdata.EMPLOYEE_COUNTRY,
+    EMPLOYEE_PHONE: editdata.EMPLOYEE_PHONE,
+    EMPLOYEE_HOURLY_WAGE: editdata.EMPLOYEE_HOURLY_WAGE,
+    EMPLOYEE_ROLE: editdata.EMPLOYEE_ROLE,
+    EMPLOYEE_EMPLMNTTYPE: editdata.EMPLOYEE_EMPLMNTTYPE,
+    EMPLOYEE_DOB: editdata.EMPLOYEE_DOB,
+    EMPLOYEE_HIRE_DATE: editdata.EMPLOYEE_HIRE_DATE,
+    EMPLOYEE_ADD: editdata.EMPLOYEE_ADD,
+    EMPLOYEE_PASSWORD: editdata.EMPLOYEE_PASSWORD,
 
-  useEffect(() => {
-    if (editEmployee) {
-      setEditEmployee((prevState) => ({
-        ...prevState,
-        EMPLOYEE_USERNAME: editdata.EMPLOYEE_USERNAME,
-        EMPLOYEE_NAME: editdata.EMPLOYEE_NAME,
-        EMPLOYEE_EMAIL: editdata.EMPLOYEE_EMAIL,
-        EMPLOYEE_STATE: editdata.EMPLOYEE_STATE,
-        EMPLOYEE_CITY: editdata.EMPLOYEE_CITY,
-        EMPLOYEE_COUNTRY: editdata.EMPLOYEE_COUNTRY,
-        EMPLOYEE_PHONE: editdata.EMPLOYEE_PHONE,
-        EMPLOYEE_HOURLY_WAGE: editdata.EMPLOYEE_HOURLY_WAGE,
-        EMPLOYEE_ROLE: editdata.EMPLOYEE_ROLE,
-        EMPLOYEE_EMPLMNTTYPE: editdata.EMPLOYEE_EMPLMNTTYPE,
-        EMPLOYEE_DOB: editdata.EMPLOYEE_DOB,
-        EMPLOYEE_HIRE_DATE: editdata.EMPLOYEE_HIRE_DATE,
-        EMPLOYEE_ADD: editdata.EMPLOYEE_ADD,
-        EMPLOYEE_PASSWORD: editdata.EMPLOYEE_PASSWORD,
-      }))
-    }
-  },[editEmployee])
+  });
 
-  // const [editEmployee, setEditEmployee] = useState({
-  //   EMPLOYEE_USERNAME: editdata.EMPLOYEE_USERNAME,
-  //   EMPLOYEE_NAME: editdata.EMPLOYEE_NAME,
-  //   EMPLOYEE_EMAIL: editdata.EMPLOYEE_EMAIL,
-  //   EMPLOYEE_STATE: editdata.EMPLOYEE_STATE,
-  //   EMPLOYEE_CITY: editdata.EMPLOYEE_CITY,
-  //   EMPLOYEE_COUNTRY: editdata.EMPLOYEE_COUNTRY,
-  //   EMPLOYEE_PHONE: editdata.EMPLOYEE_PHONE,
-  //   EMPLOYEE_HOURLY_WAGE: editdata.EMPLOYEE_HOURLY_WAGE,
-  //   EMPLOYEE_ROLE: editdata.EMPLOYEE_ROLE,
-  //   EMPLOYEE_EMPLMNTTYPE: editdata.EMPLOYEE_EMPLMNTTYPE,
-  //   EMPLOYEE_DOB: editdata.EMPLOYEE_DOB,
-  //   EMPLOYEE_HIRE_DATE: editdata.EMPLOYEE_HIRE_DATE,
-  //   EMPLOYEE_ADD: editdata.EMPLOYEE_ADD,
-  //   EMPLOYEE_PASSWORD: editdata.EMPLOYEE_PASSWORD,
-  // });
 
   // console.log(editEmployee,"edit alll")
 
@@ -97,48 +65,51 @@ export default function EmployeeEdit(props) {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const handleEdit = (e) => {
+
+  const handleCreate = (e) => {
     setEditEmployee((prev) => {
-      return { ...prev, [e.target.name]: e.target.value };
-    });
+      return { ...prev, [e.target.name]: e.target.value }
+    })
+
   };
-
-
-
 
   const availableState = country?.find(
     (c) => c.name === editEmployee.EMPLOYEE_COUNTRY
   );
-  console.log(availableState, "country")
 
   const availableCities = availableState?.states?.find(
     (s) => s.name === editEmployee.EMPLOYEE_STATE
   );
+
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .put("/api/update_employee", {
-        EMPLOYEE_MEMBER_PARENT_USERNAME:
-          editdata.EMPLOYEE_MEMBER_PARENT_USERNAME,
-        EMPLOYEE_PARENT_ID: editdata.EMPLOYEE_PARENT_ID,
-        EMPLOYEE_PARENT_USERNAME: editdata.EMPLOYEE_PARENT_USERNAME,
-        EMPLOYEE_MEMBER_PARENT_ID: editdata.EMPLOYEE_MEMBER_PARENT_ID,
-        EMPLOYEE_ID: editdata.EMPLOYEE_ID,
-        EMPLOYEE_USERNAME: editdata.EMPLOYEE_USERNAME,
-        EMPLOYEE_DETAILS_FOR_UPDATES: { ...editEmployee },
-      })
+      .put("/api/update_employee",
+        {
+          EMPLOYEE_MEMBER_PARENT_USERNAME: editdata.EMPLOYEE_MEMBER_PARENT_USERNAME,
+          EMPLOYEE_PARENT_ID: editdata.EMPLOYEE_PARENT_ID,
+          EMPLOYEE_PARENT_USERNAME: editdata.EMPLOYEE_PARENT_USERNAME,
+          EMPLOYEE_MEMBER_PARENT_ID: editdata.EMPLOYEE_MEMBER_PARENT_ID,
+          EMPLOYEE_ID: editdata.EMPLOYEE_ID,
+          EMPLOYEE_USERNAME: editdata.EMPLOYEE_USERNAME,
+          EMPLOYEE_DETAILS_FOR_UPDATES: { ...editEmployee }
+        }
+      )
       .then((response) => {
         if (response.data.operation === "failed") {
           setErrorMsg(response.data.errorMsg);
         } else if (response.data.operation === "successfull") {
-          setIsSubmitted(true);
-          props.refetch();
-          setOpen(false);
-
+          dispatch(setEmployeeData(response.data.result));
           toast.success("Fields are updated successfully!", {
             position: toast.POSITION.TOP_CENTER,
-            autoClose: 1000,
+            autoClose: 1000
           });
+          dispatch(getEmployeeData(response.data.result));
+       
+          setOpen(false);
+          // setIsSubmitted(true);
+          props.refetch()
+
         }
       })
       .catch((error) => {
@@ -146,14 +117,13 @@ export default function EmployeeEdit(props) {
       });
   };
 
+
   return (
-    <>
+    < >
       <Button
         onClick={handleOpen}
-        variant="contained"
-        className="view-btn btn btn-warning"
-        style={{ padding: "2px 2px" }}
-        color="warning"
+        variant="rounded"
+        style={{ padding: "2px 2px", onFocus: "none" }}
       >
         Edit
       </Button>
@@ -199,7 +169,7 @@ export default function EmployeeEdit(props) {
                     placeholder="Edit your Name"
                     value={editEmployee.EMPLOYEE_NAME}
                     name="EMPLOYEE_NAME"
-                    // onChange={handleEdit}
+                    // onChange={handleCreate}
                     onChange={(event) =>
                       setEditEmployee((prev) => ({
                         ...prev,
@@ -220,10 +190,11 @@ export default function EmployeeEdit(props) {
                     placeholder="Enter Your Number"
                     value={editEmployee.EMPLOYEE_PHONE}
                     name="EMPLOYEE_PHONE"
-                    onChange={handleEdit}
+                    onChange={handleCreate}
                     required
                   />
-                </div>{" "}
+                </div>
+                {" "}
                 <div className="form-group col-xl-6 py-1">
                   <label for="inputPassword4">Date Of Birth</label>
                   <input
@@ -233,22 +204,44 @@ export default function EmployeeEdit(props) {
                     placeholder="Enter Date of birth"
                     value={editEmployee.EMPLOYEE_DOB}
                     name="EMPLOYEE_DOB"
-                    onChange={handleEdit}
+                    onChange={handleCreate}
                     required
                   />
+
                 </div>
+
+
+                {/* <div className="form-group col-xl-6 py-1">
+                  <label>Employee Password</label>
+                  <input
+                  
+                    type="text"
+                    className="form-control form-control-2 rounded-0"
+                    placeholder="Enter Employee password"
+                    value={editEmployee.EMPLOYEE_PASSWORD}
+                    name="EMPLOYEE_PASSWORD"
+                    onChange={handleCreate}
+                    required
+                  />
+
+
+
+                </div> */}
+
                 <div className="form-group col-xl-6 py-1">
+
                   <label>Country</label>
 
                   <select
-                    className="form-control form-control-2 border rounded-0"
+                    className="form-control form-control-2 border rounded-0 "
                     placeholder="Country"
                     name="EMPLOYEE_COUNTRY"
                     value={editEmployee.EMPLOYEE_COUNTRY}
-                    onChange={handleEdit}
+                    onChange={handleCreate}
                   >
                     <option value="">--Choose Country--</option>
                     {country?.map((value, key) => {
+                      // console.log("hhh", value.name)
                       return (
                         <option value={value.name} key={key}>
                           {value.name}
@@ -265,7 +258,7 @@ export default function EmployeeEdit(props) {
                     placeholder="State"
                     name="EMPLOYEE_STATE"
                     value={editEmployee.EMPLOYEE_STATE}
-                    onChange={handleEdit}
+                    onChange={handleCreate}
                   >
                     <option value="">--Choose State--</option>
                     {availableState?.states?.map((e, key) => {
@@ -276,8 +269,11 @@ export default function EmployeeEdit(props) {
                       );
                     })}
                   </select>
+
                 </div>
+
               </div>
+
 
               <div className="row">
                 <div className="row">
@@ -290,7 +286,7 @@ export default function EmployeeEdit(props) {
                       placeholder="Enter Address"
                       value={editEmployee.EMPLOYEE_ADD}
                       name="EMPLOYEE_ADD"
-                      onChange={handleEdit}
+                      onChange={handleCreate}
                     />
                   </div>
                 </div>
@@ -301,7 +297,7 @@ export default function EmployeeEdit(props) {
                     placeholder="City"
                     name="EMPLOYEE_CITY"
                     value={editEmployee.EMPLOYEE_CITY}
-                    onChange={handleEdit}
+                    onChange={handleCreate}
                   >
                     <option value="">--Choose City--</option>
                     {availableCities?.cities?.map((e, key) => {
@@ -322,7 +318,7 @@ export default function EmployeeEdit(props) {
                     placeholder="Enter your Hourly wages"
                     value={editEmployee.EMPLOYEE_HOURLY_WAGE}
                     name="EMPLOYEE_HOURLY_WAGE"
-                    onChange={handleEdit}
+                    onChange={handleCreate}
                     required
                   />
                 </div>
@@ -333,7 +329,7 @@ export default function EmployeeEdit(props) {
                     className="form-control form-control-2 rounded-0 border"
                     value={editEmployee.EMPLOYEE_ROLE}
                     name="EMPLOYEE_ROLE"
-                    onChange={handleEdit}
+                    onChange={handleCreate}
                     required
                   >
                     <option selected>Choose role...</option>
@@ -344,6 +340,7 @@ export default function EmployeeEdit(props) {
                     <option>Worker</option>
                     <option>other</option>
                   </select>
+
                 </div>
               </div>
               <div className="row">
@@ -354,7 +351,7 @@ export default function EmployeeEdit(props) {
                     className="form-control form-control-2 rounded-0 border"
                     value={editEmployee.EMPLOYEE_EMPLMNTTYPE}
                     name="EMPLOYEE_EMPLMNTTYPE"
-                    onChange={handleEdit}
+                    onChange={handleCreate}
                     required
                   >
                     <option selected>Choose type...</option>
@@ -374,7 +371,7 @@ export default function EmployeeEdit(props) {
                     placeholder="Enter hire date"
                     value={editEmployee.EMPLOYEE_HIRE_DATE}
                     name="EMPLOYEE_HIRE_DATE"
-                    onChange={handleEdit}
+                    onChange={handleCreate}
                     required
                   />
                 </div>
@@ -387,6 +384,7 @@ export default function EmployeeEdit(props) {
                 </center>
               </div>
               <div className="py-2">
+
                 <button
                   type="submit"
                   className="btn btn-info text-white "
@@ -401,6 +399,7 @@ export default function EmployeeEdit(props) {
                   Cancel
                 </button>
               </div>
+
             </form>
           </Box>
         </Container>

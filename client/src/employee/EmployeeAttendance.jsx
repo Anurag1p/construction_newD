@@ -20,6 +20,7 @@ import { auth } from "../firebase";
 import moment from "moment/moment";
 import Modal from "@mui/material/Modal";
 import { RotatingLines } from "react-loader-spinner";
+import EmployeeNav from "./EmployeeNav";
 
 const containerStyle = {
   width: "100%",
@@ -442,7 +443,7 @@ const EmployeeAttendance = ({ state }) => {
         .post("/api/create_emp_attendance", attendanceData)
         .then((response) => {
           // setReportMsg("Punch in report submitted successfully!");
-          if (response.data.operation == "failed") {
+          if (response.data.operation === "failed") {
             setReportMsg(
               <p colSpan="2" className="text-danger">
                 Your Punch in report is already submitted!
@@ -700,48 +701,8 @@ const EmployeeAttendance = ({ state }) => {
   return (
     <>
       <div className="container-fluid g-0">
-        <nav
-          className="navbar navbar-expand-lg navbar-dark bg-dark"
-          style={{ marginBottom: 0 }}
-        >
-          <div className="container justify-content-between">
-            <a
-              className="text-white text-decoration-none navbar-brand"
-              href="#"
-            >
-              {Name} (Employee)
-            </a>
-            <button
-              className="btn btn-outline-primary my-2 my-sm-0 btn-sm"
-              type="submit"
-              onClick={logout}
-            >
-              Logout
-            </button>
-          </div>
-        </nav>
-
-        <nav
-          className="navbar navbar-expand-lg navbar-light bg-light"
-          style={{ height: "40px" }}
-        >
-          <div className="container">
-            <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
-              <div className="navbar-nav">
-                <Link
-                  to={`/employee/${state[0]}/${state[1]}/${state[2]}/${state[3]}}`}
-                  className="nav-link"
-                >
-                  My Projects
-                </Link>
-                <a className="bg-white text-dark nav-link">
-                  Attendance - {ProjectName}
-                </a>
-              </div>
-            </div>
-          </div>
-        </nav>
-        {resStatus == true ? (
+        <EmployeeNav project="My Projects" history="Attendance History" empName={Name} ProjectName={ProjectName}/>
+        {resStatus === true ? (
           <div className="container py-4">
             <div className="row ">
               <div className="col-lg-5 col-md-12 col-xl-5 bg-white">

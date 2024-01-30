@@ -14,20 +14,29 @@ import EmployeeNav from "./EmployeeNav";
 
 // current day
 let MyDateCurrent = moment().format("YYYY-MM-DDTHH:mm:ss.SSS[Z]");
+
+console.log(MyDateCurrent, "MycurrentDate")
+
 const formattedMyDateCurrent = moment(MyDateCurrent)
   .utcOffset(0)
   .format("YYYY-MM-DD");
-
+  console.log(formattedMyDateCurrent,"current")
+  
 //Day before 30
 let MyDateBefore = moment()
   .subtract(30, "days")
   .format("YYYY-MM-DDTHH:mm:ss.SSS[Z]");
+  console.log(MyDateBefore,"MyDateBefore")
+
 const formattedMyDateBefore = moment(MyDateBefore)
   .utcOffset(0)
   .format("YYYY-MM-DD");
+  console.log(formattedMyDateBefore,"formattedMyDateBefore")
 
 const EmployeeManual = () => {
+
   const filteredEmployee = useLocation();
+  
   const filterData = filteredEmployee?.state[0];
   const COMPANY_ID = filteredEmployee?.state[1];
   const COMPANY_USERNAME = filteredEmployee?.state[2];
@@ -35,6 +44,7 @@ const EmployeeManual = () => {
   const COMPANY_PARENT_USERNAME = filteredEmployee?.state[4];
 
   const [workvalue, setWorkvalue] = useState([]);
+
   const [dateValue, setDate] = useState({
     ATTENDANCE_START_DATE: formattedMyDateBefore,
     ATTENDANCE_END_DATE: formattedMyDateCurrent,
@@ -268,9 +278,9 @@ const EmployeeManual = () => {
       renderCell: (cellValues) => {
         const convertedTime = time12Hour(
           cellValues.row.ATTENDANCE_IN &&
-            moment(cellValues?.row.ATTENDANCE_IN).utcOffset(0).format("LT")
+          moment(cellValues?.row.ATTENDANCE_IN).utcOffset(0).format("LT")
         );
-        return cellValues?.row.ATTENDANCE_TYPE_IN == "manual" ? (
+        return cellValues?.row.ATTENDANCE_TYPE_IN === "manual" ? (
           <>
             <input
               type="time"
@@ -306,8 +316,8 @@ const EmployeeManual = () => {
             <button
               variant="contained"
               disabled={
-                cellValues.row.ATTENDANCE_TYPE_IN == "manual" &&
-                cellValues.row.ATTENDANCE_IN
+                cellValues.row.ATTENDANCE_TYPE_IN === "manual" &&
+                  cellValues.row.ATTENDANCE_IN
                   ? false
                   : true
               }
@@ -350,9 +360,9 @@ const EmployeeManual = () => {
       renderCell: (cellValues) => {
         const convertedTime = time12Hour(
           cellValues.row.ATTENDANCE_OUT &&
-            moment(cellValues?.row.ATTENDANCE_OUT).utcOffset(0).format("LT")
+          moment(cellValues?.row.ATTENDANCE_OUT).utcOffset(0).format("LT")
         );
-        return cellValues?.row.ATTENDANCE_TYPE_OUT == "manual" ? (
+        return cellValues?.row.ATTENDANCE_TYPE_OUT === "manual" ? (
           <>
             <input
               type="time"
@@ -388,8 +398,8 @@ const EmployeeManual = () => {
             <button
               variant="contained"
               disabled={
-                cellValues.row.ATTENDANCE_TYPE_OUT == "manual" &&
-                cellValues.row.ATTENDANCE_OUT
+                cellValues.row.ATTENDANCE_TYPE_OUT === "manual" &&
+                  cellValues.row.ATTENDANCE_OUT
                   ? false
                   : true
               }
@@ -541,7 +551,7 @@ const EmployeeManual = () => {
             </table>
           </div>
           {/* data gird */}
-          {resStatus == true ? (
+          {resStatus === true ? (
             <DataGrid
               className="display"
               style={{ height: "73vh" }}
@@ -575,7 +585,7 @@ const EmployeeManual = () => {
               // checkboxSelection
               disableRowSelectionOnClick
               localeText={{
-                noRowsLabel: Manual.length == 0 && "No request available",
+                noRowsLabel: Manual.length === 0 && "No request available",
               }}
             />
           ) : resStatus === "error" ? (

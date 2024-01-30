@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 import { DataGrid } from "@mui/x-data-grid";
 import { Button } from "@mui/material";
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import EmployeeNav from "./EmployeeNav";
 
 // current day
 let MyDateCurrent = moment().format("YYYY-MM-DDTHH:mm:ss.SSS[Z]");
@@ -32,6 +33,7 @@ const EmployeeTimeSheetUser = (props) => {
     ATTENDANCE_END_DATE: formattedMyDateCurrent,
   });
 
+  console.log(props, "props")
   useEffect(() => {
     // Get the current URL
     const currentURL = window.location.search;
@@ -43,9 +45,7 @@ const EmployeeTimeSheetUser = (props) => {
   }, []);
 
 
-  console.log(workvalue, "dateValue")
-
-
+  console.log(props.state, "dateValue")
 
 
   const gettimesheet = async (e) => {
@@ -53,8 +53,8 @@ const EmployeeTimeSheetUser = (props) => {
       const response = await axios.put(
         "/api/get_employee_all_for_attendence",
         {
-          ATTENDANCE_ADMIN_USERNAME: ids?.Eid,
-          ATTENDANCE_EMPLOYEE_USERNAME: ids?.id,
+          ATTENDANCE_ADMIN_USERNAME: props.state[3],
+          ATTENDANCE_EMPLOYEE_USERNAME: props.state[1],
           ATTENDANCE_START_DATE: dateValue.ATTENDANCE_START_DATE,
           ATTENDANCE_END_DATE: dateValue.ATTENDANCE_END_DATE,
         },
@@ -68,9 +68,15 @@ const EmployeeTimeSheetUser = (props) => {
     }
   };
 
+
+
   useEffect(() => {
     gettimesheet();
-  }, [ids?.id, ids?.Eid, dateValue.ATTENDANCE_START_DATE, dateValue.ATTENDANCE_END_DATE]);
+  },[]);
+
+  // useEffect(() => {
+  //   gettimesheet();
+  // }, [gettimesheet,ids?.id, ids?.Eid, dateValue.ATTENDANCE_START_DATE, dateValue.ATTENDANCE_END_DATE]);
 
 
 
@@ -184,15 +190,15 @@ const EmployeeTimeSheetUser = (props) => {
       width: 120,
       renderCell: (cellValues) => {
         return (
-            <>
+          <>
             {cellValues.row.ATTENDANCE_IN && moment(cellValues?.row.ATTENDANCE_IN).utcOffset(0).format("LT")}
-            </>
+          </>
         );
-        
+
       },
-      cellClassName : (cellValues) => {
-        return  cellValues.row.ATTENDANCE_IN ? "bg-success text-white border" : "bg-danger text-white border"
-        }
+      cellClassName: (cellValues) => {
+        return cellValues.row.ATTENDANCE_IN ? "bg-success text-white border" : "bg-danger text-white border"
+      }
     },
 
     {
@@ -206,9 +212,9 @@ const EmployeeTimeSheetUser = (props) => {
           </> : <>{"absent"}</>
         );
       },
-      cellClassName : (cellValues) => {
-        return  cellValues.row.ATTENDANCE_OUT ? "bg-success text-white border" : "bg-danger text-white border"
-        }
+      cellClassName: (cellValues) => {
+        return cellValues.row.ATTENDANCE_OUT ? "bg-success text-white border" : "bg-danger text-white border"
+      }
     },
 
     {
@@ -222,9 +228,9 @@ const EmployeeTimeSheetUser = (props) => {
           </>
         );
       },
-      cellClassName : (cellValues) => {
-        return  cellValues.row.ATTENDANCE_IN && cellValues.row.ATTENDANCE_OUT ? "bg-light text-dark border" : "text-white border"
-        }
+      cellClassName: (cellValues) => {
+        return cellValues.row.ATTENDANCE_IN && cellValues.row.ATTENDANCE_OUT ? "bg-light text-dark border" : "text-white border"
+      }
     },
     {
       field: "overtime",
@@ -251,9 +257,9 @@ const EmployeeTimeSheetUser = (props) => {
           </>
         );
       },
-      cellClassName : (cellValues) => {
-        return  cellValues.row.ATTENDANCE_IN && cellValues.row.ATTENDANCE_OUT ? "bg-success text-light border" : "bg-danger text-white border"
-        }
+      cellClassName: (cellValues) => {
+        return cellValues.row.ATTENDANCE_IN && cellValues.row.ATTENDANCE_OUT ? "bg-success text-light border" : "bg-danger text-white border"
+      }
     },
 
   ];
@@ -264,37 +270,7 @@ const EmployeeTimeSheetUser = (props) => {
   return (
     <>
       <div className="container-fluid g-0">
-        <nav
-          className="navbar navbar-expand-lg navbar-dark bg-dark"
-          style={{ marginBottom: 0 }}
-        >
-          <div className="container">
-            <a className="navbar-brand" href="#">
-              {/* {state.EMPLOYEE_NAME} (Employee) */}
-            </a>
-            <button
-              className="btn btn-outline-primary my-2 my-sm-0 btn-sm"
-              type="submit"
-            // onClick={logout}
-            >
-              Logout
-            </button>
-          </div>
-        </nav>
-
-        <nav
-          className="navbar navbar-expand-lg navbar-light bg-light"
-          style={{ height: "40px" }}
-        >
-          <div className="container">
-            <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
-              <div className="navbar-nav">
-                <a className="bg-light text-dark nav-link">My Projects</a>
-                <Link className="bg-white text-dark nav-link" to="">My attendance history</Link>
-              </div>
-            </div>
-          </div>
-        </nav>
+        <EmployeeNav project="My Projects"  history="Attendance history" MarkAttendance="Mark Attendance"/>
         <div className="container" >
           {/* <p>
           {" "}

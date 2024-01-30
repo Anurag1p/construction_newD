@@ -51,6 +51,7 @@ console.log("hhelo world = >", projectData)
 
 
   const columns = [
+    { field: 'sr', headerName: 'S No.', width: 60, renderCell: (params) => params.row.id + 1 },
     { field: "PROJECT_ID", headerName: "ID", width: 60 },
     {
       field: "PROJECT_USERNAME",
@@ -129,16 +130,20 @@ console.log("hhelo world = >", projectData)
       width: 80,
       renderCell: (cellValues) => {
         return (
-          <Button>
+          // <Button>
             <ProjectEdit edit={cellValues} />
-          </Button>
+          // </Button>
         );
       },
     },
   ];
 
-  const rows = projectData;
-  const filterData = data?.row;
+  // const rows = projectData;
+  const rows = projectData.map((project, index) => ({
+    ...project,
+    id: index + 1,
+  }));
+  // const filterData = data?.row;
 
   return (
     <>

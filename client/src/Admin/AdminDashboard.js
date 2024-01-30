@@ -11,15 +11,25 @@ import { createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail }
 import EmailIcon from '@mui/icons-material/Email';
 import InfoIcon from '@mui/icons-material/Info';
 import { Button } from "@mui/material";
+import { useSelector } from "react-redux";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser } from "@fortawesome/free-regular-svg-icons";
+import { getAllCompany } from "../redux/slice/AllCompanySlice";
 const itemsPerPage = 8;
 
 const AdminDashboard = (props) => {
   // const { state } = useLocation()
   const { state } = useLocation()
   // console.log(props.adminData, "props.adminData")
+  const navigate = useNavigate();
+
+  //data from redux...
+  const allcompanyData = useSelector(state => state?.allCompany?.company)
+
   const tableRows = state;
-  const [RowsData, setRows] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  console.log(tableRows, "tableRows")
+  // const [RowsData, setRows] = useState("");
+  // const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [displayType, setDisplayType] = useState(true);
   const [detail, setDetail] = useState();
@@ -32,48 +42,15 @@ const AdminDashboard = (props) => {
     }
     return reversed;
   }
-  let Rows = reverseArray(RowsData);
-
-  // console.log("my rows",RowsData[0].COMPANY_USERNAME)
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    getCompanyData();
-  }, [tableRows]);
-
-  const getCompanyData = async () => {
-    try {
-      const response = await axios.put(
-        "/api/get_all_company",
-        {
-          COMPANY_PARENT_ID: tableRows?.ADMIN_ID,
-          COMPANY_PARENT_USERNAME: tableRows?.ADMIN_USERNAME,
-        },
-
-      );
-      setTimeout(() => {
-        // console.log("response.data : ", response.data);
-        const data = response.data;
-        setRows(data.result);
-      }, 1000);
-      setIsLoading(false);
-    } catch (error) {
-      console.log("Error fetching data:", error);
-
-    }
-  };
-
-
-
+  let Rows = reverseArray(allcompanyData);
+  
+//function for logout
   const handleLogout = async () => {
     try {
       const response = await axios.get('/api/logout');
-      console.log("hola", response)
+      console.log("logout", response)
       if (response?.status === 200) {
-        // errorMsg(null);
         navigate("/root");
-        // console.log("")
-
       }
     } catch (error) {
       // Handle network or other errors
@@ -134,8 +111,8 @@ const AdminDashboard = (props) => {
   };
 
   const Details = ({ data }) => {
-
     const [edit, setEdit] = useState(true)
+
     const [values, setValues] = useState({
       name: `${data.COMPANY_ID}&&${data.COMPANY_USERNAME}&&${tableRows?.ADMIN_ID}&&${tableRows?.ADMIN_USERNAME}&&company`,
       email: data.COMPANY_USERNAME,
@@ -149,15 +126,14 @@ const AdminDashboard = (props) => {
 
     // check if user exists
     const checkUserExists = () => {
+
       fetchSignInMethodsForEmail(auth, values.email)
         .then((signInMethods) => {
           if (signInMethods.length > 0) {
-            // User exists
-            console.log('User exists');
             setUserExist(true)
           } else {
-            // User does not exist
             console.log('User does not exist');
+
             setUserExist(false)
           }
         })
@@ -209,6 +185,7 @@ const AdminDashboard = (props) => {
 
 
     const handleSubmission = () => {
+
       checkUserExists()
 
       if (!userExist) {
@@ -224,22 +201,11 @@ const AdminDashboard = (props) => {
       }
     };
 
-    console.log(data, "datainside")
+    // console.log(data, "datainside")
 
     return (
       <>
-        <div className="d-flex" style={{ gap: 4 }}>
-
-          {/* <button className="btn btn-sm btn-warning">
-            Basic
-          </button> */}
-          {/* {edit ? <button className="btn btn-sm btn-secondary" onClick={() => setEdit(false)}>
-            Edit
-          </button> : <button className="btn btn-sm btn-success" onClick={() => setEdit(true)}>
-            Save
-          </button>} */}
-
-        </div>
+       
         <div>
           <center>
             {errorMsg && (
@@ -251,8 +217,8 @@ const AdminDashboard = (props) => {
           </center>
         </div>
 
-      <center> <h4 style={{fontFamily:"monospace", border:"1px solid grey",background:"grey", color:"white"}}>{data.COMPANY_NAME}</h4></center> 
-        <table className="table" style={{ tableLayout: "" }}>
+        <center> <h4 style={{ fontFamily: "monospace", border: "10px solid grey", background: "grey", color: "white" }}>{data.COMPANY_NAME}</h4></center>
+        <table className="table">
           <tbody >
             <tr>
               <td><b>Company Id:</b></td>
@@ -341,19 +307,23 @@ const AdminDashboard = (props) => {
           style={{ marginBottom: 0 }}
         >
           <div className="container justify-content-between">
-            <a
-              href="#"
-              className="text-white text-decoration-none navbar-brand"
-            >
-              {tableRows?.ADMIN_USERNAME} (Admin)
+            <a className="navbar-brand">
+              <span style={{ border: "2px solid tan", borderRadius: "50%", padding: " 2px 5px" }}>
+                <FontAwesomeIcon icon={faUser} style={{ fontSize: "1.3rem", color: "tan" }} />
+              </span>
+              <span style={{ margin: " 0 10px" }}>{tableRows?.ADMIN_USERNAME} <small style={{ fontSize: "10px", color: "tan", border: "1px solid tan", borderRadius: "50%", padding: "3px" }}> Admin</small></span>
             </a>
+
             <button
-              className="btn btn-outline-primary my-2 my-sm-0 btn-sm"
+              className="btn  my-2 my-sm-0 btn-sm"
               type="submit"
               onClick={handleLogout}
+              style={{ color: "tan", border: "1px solid tan" }}
             >
               Logout
             </button>
+
+
           </div>
         </nav>
 
@@ -381,12 +351,10 @@ const AdminDashboard = (props) => {
                   <CompanyCreate
                     ADMIN_ID={tableRows?.ADMIN_ID}
                     ADMIN_USERNAME={tableRows?.ADMIN_USERNAME}
-                    Update={getCompanyData}
+                    Update={getAllCompany}
                   />
                 </div>
               </div>
-
-
               {Rows?.length > 0 ? (
                 <>
                   <div className="row">
@@ -443,7 +411,7 @@ const AdminDashboard = (props) => {
                                 <td className="border">
                                   <CompanyEdit
                                     companyEDit={post}
-                                    reFetchfun={getCompanyData}
+                                    reFetchfun={getAllCompany}
                                     reFetchDetail={HandleDetail}
                                   />
                                 </td>
@@ -478,7 +446,7 @@ const AdminDashboard = (props) => {
                                     overflow: "hidden",
                                   }}
                                 >
-                                  <h6 className="card-title" style={{fontSize:"10px"}}>
+                                  <h6 className="card-title" style={{ fontSize: "10px" }}>
                                     {post.COMPANY_NAME} - {post.COMPANY_ID}
                                   </h6>
 
@@ -493,8 +461,9 @@ const AdminDashboard = (props) => {
                                     }}
                                   >
                                     <CompanyEdit
-                                      companyEDit={post}
-                                      reFetchfun={getCompanyData}
+                                     companyEDit={post}
+                                     reFetchfun={getAllCompany}
+                                     reFetchDetail={HandleDetail}
                                     />
                                     <div className="buttons" onClick={(e) => HandleDetail(post)}>
                                       <input type="radio" id="a25" name="check-substitution-2" />
@@ -529,8 +498,9 @@ const AdminDashboard = (props) => {
                                 <div className="w-100">{post.COMPANY_EMAIL} </div>
                                 <div className="d-flex" style={{ gap: 2 }}>
                                   <CompanyEdit
-                                    companyEDit={post}
-                                    reFetchfun={getCompanyData}
+                                   companyEDit={post}
+                                   reFetchfun={getAllCompany}
+                                   reFetchDetail={HandleDetail}
                                   />
                                   {" "}
                                   <div className="buttons" onClick={(e) => HandleDetail(post)}>
