@@ -22,3 +22,4 @@ const employeeLoginSlice = createSlice(
 
 export const { setEmployeeLogin, setEmployeeLoginErr} = employeeLoginSlice.actions;
 export default employeeLoginSlice.reducer;
+

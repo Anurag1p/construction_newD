@@ -318,7 +318,7 @@ function App() {
 
             {/* for employee login ... */}
             <Route
-              path="/employee/:COMPANY_USERNAME/details"
+              path="/employee/home"
               element={<EmployeeLoginHome state={userName} />}
             />
             <Route
@@ -336,7 +336,8 @@ function App() {
               path="/employee/attendance-history"
               element={<EmployeeTimeSheetUser state={userName} />}
             />
-            <Route
+            
+              <Route
               path="/employee/attendance/:latt/:lngi/:areas/:loca/:employees/:projects/:projectids"
               element={<EmployeeAttendance state={userName} />}
             />

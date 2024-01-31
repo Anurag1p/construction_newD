@@ -134,7 +134,7 @@ const EmployeeAttendance = ({ state }) => {
       const TodayAttendance = response?.data.result?.filter(
         (prev) =>
           prev.ATTENDANCE_DATE_ID === formattedDate &&
-          prev.ATTENDANCE_PROJECT_ID == projectids
+          prev.ATTENDANCE_PROJECT_ID === projectids
       );
       setAttendanceToday(TodayAttendance);
 
@@ -274,7 +274,7 @@ const EmployeeAttendance = ({ state }) => {
       axios
         .post("/api/create_emp_attendance", attendanceData)
         .then((response) => {
-          if (response.data.operation == "failed") {
+          if (response.data.operation === "failed") {
             setOutdone(
               <p colSpan="2" className="text-danger">
                 Your Punch Out is already submitted!
@@ -589,7 +589,7 @@ const EmployeeAttendance = ({ state }) => {
       axios
         .post("/api/create_emp_attendance", attendanceData)
         .then((response) => {
-          if (response.data.operation == "failed") {
+          if (response.data.operation === "failed") {
             setReportMsg(
               <p colSpan="2" className="text-danger">
                 Your Punch Out report is already submitted!
@@ -923,7 +923,7 @@ const EmployeeAttendance = ({ state }) => {
               </div>
             </div>
           </div>
-        ) : resStatus == "error" ? <div
+        ) : resStatus === "error" ? <div
         style={{
           position: "absolute",
           top: "50%",
